@@ -1,10 +1,7 @@
 import { neon } from '@neondatabase/serverless'
 import { drizzle } from 'drizzle-orm/neon-http'
 import env from '~/env'
-import { users } from './schema/users'
-
+import * as authSchema from './schema/auth'
 const client = neon(env.DATABASE_URL)
 
-const schema = { users }
-
-export default drizzle<typeof schema>({ client })
+export default drizzle({ client, schema: { ...authSchema } })

@@ -1,8 +1,8 @@
-import { createAuth, createGithubAuthenticationProvider, prismaAdapter } from '@rubriclab/auth'
-import { db } from '~/db'
+import { createAuth, createGithubAuthenticationProvider, drizzleAdapter } from '@rubriclab/auth'
+import db from '~/db'
 import env from '~/env'
 
-export const { routes, actions } = createAuth({
+export const { routes, actions, __types } = createAuth({
 	authUrl: env.NEXT_PUBLIC_AUTH_URL,
 	oAuth2AuthenticationProviders: {
 		github: createGithubAuthenticationProvider({
@@ -10,5 +10,5 @@ export const { routes, actions } = createAuth({
 			githubClientSecret: env.GITHUB_CLIENT_SECRET
 		})
 	},
-	databaseProvider: prismaAdapter(db)
+	databaseProvider: drizzleAdapter(db)
 })
