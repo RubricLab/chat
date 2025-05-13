@@ -7,6 +7,9 @@
 		"@rubriclab/config": "^0.0.15",
 		"@types/bun": "latest"
 	},
+	"scripts": {
+		"dev": "next dev"
+	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.0",
 		"@prisma/client": "^6.5.0",
@@ -14,7 +17,8 @@
 		"drizzle-kit": "^0.30.6",
 		"drizzle-orm": "^0.41.0",
 		"next": "15.2.3",
-		"zod": "3.24.2"
+		"openai": "^4.98.0",
+		"zod": "^4.0.0-beta.20250505T195954"
 	},
 	"peerDependencies": {
 		"typescript": "^5"

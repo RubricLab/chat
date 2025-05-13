@@ -1,12 +1,25 @@
 {
-	"compilerOptions": {
-		"baseUrl": ".",
-		"paths": {
-			"~/*": ["./src/lib/*", "./src/app/*"]
-		},
-		"plugins": [{ "name": "next" }]
-	},
-	"exclude": ["node_modules"],
-	"extends": "@rubriclab/config/tsconfig",
-	"include": ["**/*.ts", "**/*.tsx"]
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~/*": [
+        "./src/lib/*",
+        "./src/app/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "extends": "@rubriclab/config/tsconfig",
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ]
 }

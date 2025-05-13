@@ -1,0 +1,20 @@
+- actions are specific transformers: sendEmail({subject:string, ...})=>void
+- blocks are either:
+    - specific transformers: textInput(void)=>string
+    - generic transformers: form<FIELD_SCHEMA>(void)=>FIELD_SCHEMA, table<ROW_SCHEMA>({data: ROW_SCHEMA[]})=>void
+
+- chaining:
+    - block/action payloads that tend to mutations can easily be chained:
+        - sendEmail({subject:textInput()})
+            - a runtime machine will decode and block the chain by client side IO
+    - block/action payloads that tend to consume have a 'mapping problem'
+        - table<LEAD>({data: getLeads(void)=>LEAD[]}, columns: {leadName: getLeadNumberFromName(this.leadName)})
+            - HOW do we ensure "this.leadName" is ONLY available in that column context?
+    - form<LEAD>({onSubmit: createLead({name:this.name}), fields: {name: textInput()}})
+    - chart<>
+
+
+
+YOU could:
+- INstantiate a Mapper
+- Instantiate a List (of pills)
