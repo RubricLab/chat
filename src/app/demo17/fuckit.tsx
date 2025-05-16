@@ -184,7 +184,17 @@ const actions = registerActions({
 	registry: actionRegistry
 })
 
-actionRegistry.add(unions[], { id: 'unions' })
+const responseFormat = createResponseFormat({
+	name: 'thing',
+	schema: z.object({
+		actions
+	}),
+	registry: actionRegistry
+})
+
+console.dir(responseFormat, { depth: null })
+
+// actionRegistry.add(unions[], { id: 'unions' })
 
 async function main() {
 	const responseFormat = createResponseFormat({

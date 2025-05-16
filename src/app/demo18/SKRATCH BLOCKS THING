@@ -1,0 +1,24 @@
+type Resolver<T extends z.ZodType> = (input: z.infer<T>) => z.ZodUnion<[z.ZodType]>
+
+export function createBlock<
+	I extends Record<string, z.ZodType | Resolver<z.ZodType>>,
+	O extends z.ZodType
+>({
+	schema,
+	render
+}: {
+	schema: { input: I; output: O }
+	render: (
+		input: z.infer<z.ZodObject<{ [K in keyof I]: I[K] extends z.ZodType ? I[K] : ReturnType<I[K]> }>>
+		{ emit }: { emit: (output: z.infer<O>) => void }
+	) => void
+}) {
+	return {
+		type: 'block',
+		schema: {
+			input: z.object(schema.input),
+			output: schema.output
+		},
+		render
+	}
+}
