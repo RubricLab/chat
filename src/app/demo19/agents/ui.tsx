@@ -1,13 +1,18 @@
-import { z } from 'zod'
+import { registry, z } from 'zod'
 import { createAction } from '../lib/actions'
 import { createStructuredOutputInference } from '../lib/agent'
-import { createBlock, createBlockProxy, createGenericBlock } from '../lib/blocks'
+import {
+	createBlock,
+	createBlockProxy,
+	createGenericActionExecutorBlock,
+	createGenericTypeProviderBlock
+} from '../lib/blocks'
 import { createResponseFormat } from '../lib/responseFormat'
-import { createRegistry, createSchema } from '../lib/schema'
+import { createRegistry, createSchema, registerNode } from '../lib/schema'
 
-const registry = createRegistry()
+const uiRegistry = createRegistry()
 
-const { createCompatabilitySlot, zodRegistry } = createRegistry()
+const instantiationRegistry = createRegistry()
 
 /*
  *   --------------
@@ -15,17 +20,17 @@ const { createCompatabilitySlot, zodRegistry } = createRegistry()
  *   --------------
  */
 
-const [CONTACT_ID, CONTACT_ID_INPUT] = createCompatabilitySlot({
+const [CONTACT_ID, CONTACT_ID_INPUT] = uiRegistry.createCompatabilitySlot({
 	name: 'contactId',
 	schema: z.string()
 })
 
-const [STRING, STRING_INPUT] = createCompatabilitySlot({
+const [STRING, STRING_INPUT] = uiRegistry.createCompatabilitySlot({
 	name: 'string',
 	schema: z.string()
 })
 
-const [CONTACT, CONTACT_INPUT] = createCompatabilitySlot({
+const [CONTACT, CONTACT_INPUT] = uiRegistry.createCompatabilitySlot({
 	name: 'contact',
 	schema: z.object({
 		id: CONTACT_ID,
@@ -113,11 +118,14 @@ const blocks = {
  *   --------------
  */
 
-const schema = createSchema({
-	actions,
-	blocks,
-	registry
-})
+uiRegistry.setRootSchema(
+	createSchema({
+		name: 'UI',
+		actions,
+		blocks,
+		registry: uiRegistry
+	})
+)
 
 /*
  *   ----------------------
@@ -125,98 +133,139 @@ const schema = createSchema({
  *   ----------------------
  */
 
-const instantiateView = createGenericBlock({
-	typeOptions: {},
-	instantiate({ type }) {
+const instantiateForm = createGenericActionExecutorBlock({
+	actionOptions: actions,
+	instantiate({ action }) {
 		return createBlock({
 			schema: {
 				input: {
-					hydrate: types[type],
-					children: schema
+					inputs: z.object(actions[action].schema.input),
+					onExecute: z.array(uiRegistry.rootSchema)
 				},
 				output: z.void()
 			},
-			render: ({ hydrate, children }) => {
-				console.log(children)
+			render: ({ inputs, onExecute }) => {
 				return (
-					<>
-						{/* {children.map((child, index) => {
-							// return child({ hydrate })
-						})} */}
-					</>
+					<div>
+						<div>
+							<p>Action</p>
+							{action}: {JSON.stringify(inputs)}
+						</div>
+						<div>
+							<p>On Execute</p>
+							{JSON.stringify(onExecute)}
+						</div>
+					</div>
 				)
 			}
 		})
 	}
 })
 
-const instantiateForm = createGenericBlock({
-	typeOptions: Object.fromEntries(
-		Object.entries(actions).map(([name, action]) => [name, action.schema.input])
-	),
+const instantiateView = createGenericTypeProviderBlock({
+	typeOptions: types,
 	instantiate({ type }) {
 		return createBlock({
-			schema: { input: { hydrate: types[type], children: schema }, output: z.void() }
+			schema: {
+				input: {
+					hydrate: types[type],
+					children: z.array(uiRegistry.rootSchema),
+					name: z.string()
+				},
+				output: z.void()
+			},
+			render: ({ hydrate, children, name }) => {
+				console.log(children)
+				return (
+					<div>
+						<h1>{name}</h1>
+						<div>
+							<p>Hydrate</p>
+							{JSON.stringify(hydrate)}
+						</div>
+						<div>
+							<p>Children</p>
+							{JSON.stringify(children)}
+						</div>
+					</div>
+				)
+			}
 		})
 	}
 })
-
-// const renderViewTool = buildBlockProxy({ name: 'renderView', input: renderView.schema.input })
-
-// const schema = z.object({
-// 	toolCalls: z.array(z.union([renderViewTool]))
-// })
 
 async function buildUI(prompt: string) {
 	const instantiationSchema = z.object({
 		instantiations: z.array(
 			createSchema({
+				name: 'instantiationSchema',
 				actions: {
 					instantiateView,
 					instantiateForm
 				},
 				blocks: {},
-				registry
+				registry: instantiationRegistry
 			})
 		)
 	})
 
+	const instantiationResponseFormat = createResponseFormat({
+		name: 'InstantiationSchema',
+		schema: instantiationSchema,
+		registry: instantiationRegistry.zodRegistry
+	})
+
+	console.dir(instantiationResponseFormat, { depth: null })
+
 	const { instantiations } = await createStructuredOutputInference({
 		openAIApiKey: process.env.OPENAI_API_KEY ?? (undefined as never),
-		responseFormat: createResponseFormat({
-			name: 'InstantiationSchema',
-			schema: instantiationSchema,
-			registry: zodRegistry
-		}),
-		messages: [{ role: 'user', content: 'render a contact view' }]
+		responseFormat: instantiationResponseFormat,
+		messages: [{ role: 'user', content: 'instantiate a contact view and a form' }]
 	})
 
-	const instantiated = instantiations.map(instantiation => {
-		if ('action' in instantiation) {
-			const { action, params } = instantiation
+	console.dir(instantiations, { depth: null })
+
+	const instantiated = await Promise.all(
+		instantiations.map(async ({ action, params }) => {
 			switch (action) {
-				case 'action_renderView': {
-					const newBlock = renderView.instantiate(params)
-					return createBlockProxy({ name: `view_${params.type}`, input: newBlock.schema.input })
+				case 'action_instantiateView': {
+					const instantiatedView = await registerNode({
+						name: `view_${params.type}`,
+						node: await instantiateView.execute(params),
+						registry: uiRegistry
+					})
+
+					uiRegistry.pushToRootSchema(instantiatedView)
+					return instantiatedView
+				}
+				case 'action_instantiateForm': {
+					const instantiatedForm = await registerNode({
+						name: `form_${params.action}`,
+						node: await instantiateForm.execute(params),
+						registry: uiRegistry
+					})
+
+					uiRegistry.pushToRootSchema(instantiatedForm)
+					return instantiatedForm
 				}
 			}
-		}
-	})
+		})
+	)
 
-	const responseFormat2 = createResponseFormat({
+	const uiResponseFormat = createResponseFormat({
 		name: 'ui_2',
 		schema: z.object({
-			ui: z.array(z.union([...instantiated]))
+			ui: z.array(uiRegistry.rootSchema)
 		}),
-		registry
+		registry: uiRegistry.zodRegistry
 	})
 
-	// console.dir(responseFormat2, { depth: null })
+	console.dir(uiResponseFormat, { depth: null })
 
 	const { ui } = await createStructuredOutputInference({
 		openAIApiKey: process.env.OPENAI_API_KEY ?? (undefined as never),
-		responseFormat: responseFormat2,
-		messages: [{ role: 'user', content: 'render a contact view' }]
+		responseFormat: uiResponseFormat,
+		messages: [{ role: 'user', content: 'show me a form inside a contact view.' }]
 	})
 
 	console.dir(ui, { depth: null })

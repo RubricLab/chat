@@ -1,6 +1,11 @@
 import z from 'zod'
+import type { AnyAction } from './actions'
 
-export function createBlock<I extends Record<string, z.ZodType>, O extends z.ZodType>({
+export function createBlock<
+	I extends Record<string, z.ZodType>,
+	O extends z.ZodType
+	// AdditionalOptions extends Record<string, unknown> = never
+>({
 	schema,
 	render
 }: {
@@ -8,10 +13,11 @@ export function createBlock<I extends Record<string, z.ZodType>, O extends z.Zod
 	render: (
 		input: { [K in keyof I]: z.infer<I[K]> },
 		{ emit }: { emit: (output: z.infer<O>) => void }
+		// & AdditionalOptions
 	) => void
 }) {
 	return {
-		type: 'block',
+		type: 'block' as const,
 		schema,
 		render
 	}
@@ -21,12 +27,12 @@ export type AnyBlock = ReturnType<typeof createBlock<Record<string, z.ZodType>, 
 
 export type BlockMap = Record<string, AnyBlock>
 
-export function createBlockProxy<Name extends string, Input extends AnyBlock['schema']['input']>({
+export function createBlockProxy<Name extends string, Block extends AnyBlock>({
 	name,
 	input
 }: {
 	name: Name
-	input: Input
+	input: Block['schema']['input']
 }) {
 	return z.strictObject({
 		block: z.literal(`block_${name}` as const),
@@ -36,19 +42,30 @@ export function createBlockProxy<Name extends string, Input extends AnyBlock['sc
 
 export function createGenericTypeProviderBlock<
 	TypeOptions extends Record<string, z.ZodType>,
-	Input extends Record<string, z.ZodType>,
-	Output extends z.ZodType
+	ChildrenOptions extends z.ZodUnion,
+	AdditionalInput extends Record<string, z.ZodType>
 >({
 	typeOptions,
 	instantiate
 }: {
 	typeOptions: TypeOptions
-	instantiate: ({
+	instantiate: <TypeKey extends keyof TypeOptions & string>({
 		type
-	}: { type: keyof TypeOptions }) => ReturnType<typeof createBlock<Input, Output>>
+	}: {
+		type: TypeKey
+	}) => ReturnType<
+		typeof createBlock<
+			AdditionalInput & {
+				hydrate: TypeOptions[keyof TypeOptions]
+				children: z.ZodArray<ChildrenOptions>
+			},
+			z.ZodVoid
+		>
+	>
 }) {
 	type Keys = keyof TypeOptions & string
 	const keys = Object.keys(typeOptions) as Keys[]
+
 	return {
 		type: 'action' as const,
 		schema: {
@@ -57,10 +74,49 @@ export function createGenericTypeProviderBlock<
 			},
 			output: z.void()
 		},
-		instantiate
+		execute: async ({ type }: { type: Keys }) => {
+			return instantiate({ type })
+		}
 	}
 }
 
-// export function createGenericActionExecutorBlock<>
+export function createGenericActionExecutorBlock<
+	ActionOptions extends Record<string, Omit<AnyAction, 'execute'>>,
+	ChildrenOptions extends z.ZodUnion
+>({
+	actionOptions,
+	instantiate
+}: {
+	actionOptions: ActionOptions
+	instantiate: <ActionKey extends keyof ActionOptions>({
+		action
+	}: {
+		action: ActionKey
+	}) => ReturnType<
+		typeof createBlock<
+			{
+				inputs: z.ZodObject<ActionOptions[keyof ActionOptions]['schema']['input']>
+				onExecute: z.ZodArray<ChildrenOptions>
+			},
+			z.ZodVoid
+		>
+	>
+}) {
+	type Keys = keyof ActionOptions & string
+	const keys = Object.keys(actionOptions) as Keys[]
 
-// export function createGenericActionMapperBlock<>
+	return {
+		type: 'action' as const,
+		schema: {
+			input: {
+				action: z.enum(keys)
+			},
+			output: z.void()
+		},
+		execute: async ({ action }: { action: Keys }) => {
+			return instantiate({ action })
+		}
+	}
+}
+
+export function createGenericActionMapperBlock<ActionOptions extends Record<string, z.ZodType>>() {}

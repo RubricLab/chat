@@ -1,6 +1,6 @@
 import z from 'zod'
-import { type AnyAction, createActionProxy } from './actions'
-import { type BlockMap, createBlockProxy } from './blocks'
+import { type ActionMap, type AnyAction, createActionProxy } from './actions'
+import { type AnyBlock, type BlockMap, createBlockProxy } from './blocks'
 
 export type ZodRegistry = z.core.$ZodRegistry<{ id: string }>
 
@@ -9,8 +9,15 @@ export function createRegistry() {
 
 	const zodRegistry = z.registry<{ id: string }>()
 
+	let root: z.ZodType[] = []
+
+	const rootSchema = z
+		.lazy(() => z.union(root))
+		.register(zodRegistry, { id: 'ROOT' as const }) as unknown as z.ZodUnion
+
 	return {
 		zodRegistry,
+		rootSchema,
 		createCompatabilitySlot<Schema extends z.ZodType>({
 			name,
 			schema
@@ -32,6 +39,43 @@ export function createRegistry() {
 		}: { schema: Schema; compatibility: z.ZodType }) {
 			const curr = compatibilityRegistry.get(schema) ?? []
 			compatibilityRegistry.set(schema, [...curr, compatibility])
+		},
+		setRootSchema(schema: z.ZodType) {
+			root = [schema]
+		},
+		pushToRootSchema<Schema extends z.ZodType>(schema: Schema) {
+			root.push(schema)
+		}
+	}
+}
+
+export function registerNode<Name extends string, Node extends AnyBlock | AnyAction>({
+	name,
+	node: { type, schema },
+	registry: { pushCompatibility, zodRegistry }
+}: {
+	name: Name
+	node: Node
+	registry: ReturnType<typeof createRegistry>
+}) {
+	switch (type) {
+		case 'block': {
+			const proxy = createBlockProxy({
+				name,
+				input: schema.input
+			})
+			pushCompatibility({ schema: schema.output, compatibility: proxy })
+			zodRegistry.add(proxy, { id: `block_${name}` as const })
+			return proxy
+		}
+		case 'action': {
+			const proxy = createActionProxy({
+				name,
+				input: schema.input
+			})
+			pushCompatibility({ schema: schema.output, compatibility: proxy })
+			zodRegistry.add(proxy, { id: `action_${name}` as const })
+			return proxy
 		}
 	}
 }
@@ -40,35 +84,38 @@ export function createRegistry() {
 type ActionMapWithoutExecute = Record<string, Omit<AnyAction, 'execute'>>
 
 export function createSchema<Actions extends ActionMapWithoutExecute, Blocks extends BlockMap>({
+	name,
 	actions,
 	blocks,
 	registry
 }: {
+	name: string
 	actions?: Actions
 	blocks?: Blocks
 	registry: ReturnType<typeof createRegistry>
 }) {
-	const actionProxies = Object.entries(actions ?? {}).map(([name, action]) => {
-		const actionProxy = createActionProxy({
-			name,
-			input: action.schema.input
-		})
-		registry.pushCompatibility({ schema: action.schema.output, compatibility: actionProxy })
-		registry.zodRegistry.add(actionProxy, { id: `action_${name}` })
+	type ActionKeys = keyof Actions & string
+	type BlockKeys = keyof Blocks & string
 
-		return actionProxy
-	})
+	const actionProxies = Object.entries(actions ?? {}).map(([name, action]) => {
+		return registerNode({
+			name,
+			node: action,
+			registry
+		})
+	}) as {
+		[K in ActionKeys]: ReturnType<typeof createActionProxy<K, Actions[K] & { execute: never }>>
+	}[ActionKeys][]
 
 	const blockProxies = Object.entries(blocks ?? {}).map(([name, block]) => {
-		const blockProxy = createBlockProxy({
+		return registerNode({
 			name,
-			input: block.schema.input
+			node: block,
+			registry
 		})
-		registry.pushCompatibility({ schema: block.schema.output, compatibility: blockProxy })
-		registry.zodRegistry.add(blockProxy, { id: `block_${name}` })
+	}) as {
+		[K in BlockKeys]: ReturnType<typeof createBlockProxy<K, Blocks[K]>>
+	}[BlockKeys][]
 
-		return blockProxy
-	})
-
-	return z.union([...actionProxies, ...blockProxies])
+	return z.union([...actionProxies, ...blockProxies] as const)
 }
