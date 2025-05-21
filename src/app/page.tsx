@@ -1,14 +1,17 @@
-import { sendMessage } from '~/ai'
-import { useSession } from '~/auth'
-import { useEvents } from '~/events'
-import { Chat, Page } from '~/ui'
+'use client'
+// import { sendMessage } from '~/ai'
+// import { useSession } from '~/auth'
+import { useEvents } from '~/events/client'
+// import { Chat, Page } from '~/ui'
 
 export default function () {
-	const { userId } = useSession()
-	const { events } = useEvents(`chat_${userId}`)
+	// const { userId } = useSession()
+	useEvents({ id: '_', on: {} })
+
 	return (
-		<Page>
-			<Chat messages={events} sendMessage={sendMessage} />
-		</Page>
+		<>HI</>
+		// <Page>
+		// 	<Chat messages={events} sendMessage={sendMessage} />
+		// </Page>
 	)
 }
