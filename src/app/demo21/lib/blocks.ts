@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import z from 'zod/v4'
+import z from 'zod'
 import type { AnyAction } from './actions'
 
 export function createBlock<
@@ -42,7 +42,7 @@ export function createBlockProxy<Name extends string, Block extends AnyBlock>({
 }
 
 export function createGenericTypeProviderBlock<
-	TypeOptions extends Record<string, { type: z.ZodType; compatabilities: z.ZodType }>,
+	TypeOptions extends Record<string, z.ZodType>,
 	ChildrenOptions extends z.ZodUnion,
 	AdditionalInput extends Record<string, z.ZodType>
 >({
@@ -57,7 +57,7 @@ export function createGenericTypeProviderBlock<
 	}) => ReturnType<
 		typeof createBlock<
 			AdditionalInput & {
-				hydrate: TypeOptions[keyof TypeOptions]['compatabilities']
+				hydrate: TypeOptions[keyof TypeOptions]
 				children: z.ZodArray<ChildrenOptions>
 			},
 			z.ZodVoid
@@ -121,3 +121,23 @@ export function createGenericActionExecutorBlock<
 }
 
 export function createGenericActionMapperBlock<ActionOptions extends Record<string, z.ZodType>>() {}
+
+export function createRenderer<Blocks extends BlockMap>({ blocks }: { blocks: Blocks }) {
+	return {
+		render({
+			block,
+			props
+		}: {
+			[BlockKey in keyof Blocks]: {
+				block: BlockKey
+				props: z.infer<z.ZodObject<Blocks[BlockKey]['schema']['input']>>
+			}
+		}[keyof Blocks]) {
+			function emit(out) {
+				console.log(out)
+			}
+			console.log(block)
+			return blocks[block]?.render(props, { emit })
+		}
+	}
+}

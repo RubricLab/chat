@@ -1,4 +1,4 @@
-import z from 'zod/v4'
+import z from 'zod'
 
 export function createAction<I extends Record<string, z.ZodType>, O extends z.ZodType>({
 	schema,

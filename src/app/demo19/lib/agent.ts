@@ -1,6 +1,6 @@
 import { OpenAI } from 'openai/index.mjs'
 import type { EasyInputMessage } from 'openai/resources/responses/responses'
-import type z from 'zod'
+import type z from 'zod/v4'
 import type { ResponseFormat } from './responseFormat'
 
 export async function createStructuredOutputInference<Format extends ResponseFormat<z.ZodObject>>({

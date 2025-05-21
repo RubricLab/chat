@@ -1,11 +1,11 @@
-import z from 'zod'
+import z from 'zod/v4'
 import { type ActionMap, type AnyAction, createActionProxy } from './actions'
 import { type AnyBlock, type BlockMap, createBlockProxy } from './blocks'
 
 export type ZodRegistry = z.core.$ZodRegistry<{ id: string }>
 
 export function createRegistry() {
-	const compatibilityRegistry = new WeakMap<z.ZodType, z.ZodType[]>()
+	const compatibilityRegistry = new Map<z.ZodType, z.ZodType[]>()
 
 	const zodRegistry = z.registry<{ id: string }>()
 
@@ -20,16 +20,23 @@ export function createRegistry() {
 		rootSchema,
 		createCompatabilitySlot<Schema extends z.ZodType>({
 			name,
-			schema
+			schema,
+			excludeSourceSchema = false
 		}: {
 			name: string
 			schema: Schema
+			excludeSourceSchema?: boolean
 		}) {
-			compatibilityRegistry.set(schema, [schema])
+			excludeSourceSchema
+				? compatibilityRegistry.set(schema, [])
+				: compatibilityRegistry.set(schema, [schema])
 			return [
 				schema,
 				z
-					.lazy(() => z.union(compatibilityRegistry.get(schema) ?? (undefined as never)))
+					.lazy(() => {
+						const compat = compatibilityRegistry.get(schema) ?? (undefined as never)
+						return compat.length ? z.union(compat) : z.union([schema])
+					})
 					.register(zodRegistry, { id: name }) as unknown as Schema
 			] as const
 		},
@@ -45,6 +52,45 @@ export function createRegistry() {
 		},
 		pushToRootSchema<Schema extends z.ZodType>(schema: Schema) {
 			root.push(schema)
+		},
+		cloneSlot<Schema extends z.ZodType>({
+			name,
+			schema
+		}: {
+			name: string
+			schema: Schema
+		}) {
+			const curr = compatibilityRegistry.get(schema) ?? []
+			const clone = schema.clone()
+			compatibilityRegistry.set(clone, curr)
+			return [
+				clone,
+				z
+					.lazy(() => z.union(compatibilityRegistry.get(clone) ?? (undefined as never)))
+					.register(zodRegistry, { id: name }) as unknown as Schema
+			] as const
+		},
+		cloneAndReplaceInRoot<Schema extends z.ZodType>({
+			name,
+			replaceSchema,
+			withSchema
+		}: {
+			name: string
+			replaceSchema: Schema
+			withSchema: Schema
+		}) {
+			const rootClone = root
+			const compatibilityRegistryClone = new Map<z.ZodType, z.ZodType[]>(compatibilityRegistry)
+			// const unionClone = z.lazy(() => z.union(rootClone))
+			compatibilityRegistryClone.forEach((e, k) => {
+				if (e.includes(replaceSchema)) {
+					compatibilityRegistryClone.set(
+						k,
+						e.map(e => (e === replaceSchema ? withSchema : e))
+					)
+				}
+			})
+			return z.lazy(() => z.union(rootClone)).register(zodRegistry, { id: name }) as unknown as Schema
 		}
 	}
 }

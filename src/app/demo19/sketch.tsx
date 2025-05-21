@@ -1,4 +1,4 @@
-import z from 'zod'
+import z from 'zod/v4'
 import { createAction } from './lib/actions'
 import { createBlock } from './lib/blocks'
 

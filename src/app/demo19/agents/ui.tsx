@@ -1,4 +1,4 @@
-import { registry, z } from 'zod'
+import { registry, z } from 'zod/v4'
 import { createAction } from '../lib/actions'
 import { createStructuredOutputInference } from '../lib/agent'
 import {
@@ -23,11 +23,13 @@ const instantiationRegistry = createRegistry()
 const [CONTACT_ID, CONTACT_ID_INPUT] = uiRegistry.createCompatabilitySlot({
 	name: 'contactId',
 	schema: z.string()
+	// excludeSourceSchema: true
 })
 
 const [STRING, STRING_INPUT] = uiRegistry.createCompatabilitySlot({
 	name: 'string',
-	schema: z.string()
+	schema: z.string(),
+	excludeSourceSchema: true
 })
 
 const [CONTACT, CONTACT_INPUT] = uiRegistry.createCompatabilitySlot({
@@ -35,13 +37,14 @@ const [CONTACT, CONTACT_INPUT] = uiRegistry.createCompatabilitySlot({
 	schema: z.object({
 		id: CONTACT_ID,
 		name: STRING_INPUT
-	})
+	}),
+	excludeSourceSchema: true
 })
 
 const types = {
-	CONTACT_ID,
-	STRING,
-	CONTACT
+	CONTACT_ID: { type: CONTACT_ID, compatabilities: CONTACT_ID_INPUT },
+	STRING: { type: STRING, compatabilities: STRING_INPUT },
+	CONTACT: { type: CONTACT, compatabilities: CONTACT_INPUT }
 }
 
 /*
@@ -133,9 +136,52 @@ uiRegistry.setRootSchema(
  *   ----------------------
  */
 
+// function cloneRootSchemaAndShootInTheLiteralAsACompatibilityWithActionOut({
+// 	actionOutSchema,
+// 	literal
+// }: {
+// 	actionOutSchema: z.ZodType
+// 	literal: z.ZodLiteral<string>
+// }) {
+// 	// const [CLONED, CLONED_COMPATIBILITIES] = uiRegistry.cloneSlot({
+// 	// 	name: 'CLONED_ACTION_OUT_SCHEMA',
+// 	// 	schema: actionOutSchema
+// 	// })
+
+// 	uiRegistry.pushCompatibility({
+// 		schema: actionOutSchema,
+// 		compatibility: literal
+// 	})
+
+// 	// return [CLONED, CLONED_COMPATIBILITIES] as const
+// }
+
+// const createMap = {
+// 	type: 'action' as const,
+// 	schema: {
+// 		input: {
+// 			actionChain: z.enum(keys)
+// 		},
+// 		output: z.void()
+// 	},
+// 	execute: async ({ action }: { action: Keys }) => {
+// 		return instantiate({ action })
+// 	}
+// }
+
 const instantiateForm = createGenericActionExecutorBlock({
 	actionOptions: actions,
 	instantiate({ action }) {
+		const outSchema = actions[action].schema.output
+		uiRegistry.pushCompatibility({
+			schema: outSchema,
+			compatibility: z.literal(`$.CONTEXT_KEY.${action}`)
+		})
+		// const [CLONED, CLONED_COMPATIBILITIES] =
+		// cloneRootSchemaAndShootInTheLiteralAsACompatibilityWithActionOut({
+		// 	actionOutSchema: outSchema,
+		// 	literal: z.literal(`$.${action}_output`)
+		// })
 		return createBlock({
 			schema: {
 				input: {
@@ -165,10 +211,19 @@ const instantiateForm = createGenericActionExecutorBlock({
 const instantiateView = createGenericTypeProviderBlock({
 	typeOptions: types,
 	instantiate({ type }) {
+		const outSchema = types[type]
+		// cloneRootSchemaAndShootInTheLiteralAsACompatibilityWithActionOut({
+		// 	actionOutSchema: outSchema,
+		// 	literal: z.literal(`$.${type}_output`)
+		// })
+		uiRegistry.pushCompatibility({
+			schema: outSchema.type,
+			compatibility: z.literal(`$.CONTEXT_KEY.${type}`)
+		})
 		return createBlock({
 			schema: {
 				input: {
-					hydrate: types[type],
+					hydrate: outSchema.compatabilities,
 					children: z.array(uiRegistry.rootSchema),
 					name: z.string()
 				},
@@ -210,17 +265,19 @@ async function buildUI(prompt: string) {
 	})
 
 	const instantiationResponseFormat = createResponseFormat({
-		name: 'InstantiationSchema',
+		name: 'INSTANTIATION_SCHEMA',
 		schema: instantiationSchema,
 		registry: instantiationRegistry.zodRegistry
 	})
 
-	console.dir(instantiationResponseFormat, { depth: null })
+	// console.dir(instantiationResponseFormat, { depth: null })
 
 	const { instantiations } = await createStructuredOutputInference({
 		openAIApiKey: process.env.OPENAI_API_KEY ?? (undefined as never),
 		responseFormat: instantiationResponseFormat,
-		messages: [{ role: 'user', content: 'instantiate a contact view and a form' }]
+		messages: [
+			{ role: 'user', content: 'instantiate a contact view (Contact Type) and a send emailform' }
+		]
 	})
 
 	console.dir(instantiations, { depth: null })
@@ -253,19 +310,30 @@ async function buildUI(prompt: string) {
 	)
 
 	const uiResponseFormat = createResponseFormat({
-		name: 'ui_2',
+		name: 'UI_SCHEMA',
 		schema: z.object({
 			ui: z.array(uiRegistry.rootSchema)
 		}),
 		registry: uiRegistry.zodRegistry
 	})
 
-	console.dir(uiResponseFormat, { depth: null })
+	// console.dir(uiResponseFormat, { depth: null })
 
 	const { ui } = await createStructuredOutputInference({
 		openAIApiKey: process.env.OPENAI_API_KEY ?? (undefined as never),
 		responseFormat: uiResponseFormat,
-		messages: [{ role: 'user', content: 'show me a form inside a contact view.' }]
+		messages: [
+			{
+				role: 'system',
+				content:
+					'you are a UI generation bot. In a previous step, generic blocks may have been instantiated such as views, forms. These blocks will allow the use of context keys inside their children. Context keys begin with "$". You can consume context keys inside hydrated children.'
+			},
+			{
+				role: 'user',
+				content:
+					'show me a send email form inside a contact view. hydrate the contact view with the getContact for the id: The contact ID is 0rjnbjd-rjdn-qiej. You can get the contact using the find By id action.'
+			}
+		]
 	})
 
 	console.dir(ui, { depth: null })

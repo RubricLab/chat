@@ -12,13 +12,17 @@
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.0",
+		"@openai/realtime-api-beta": "openai/openai-realtime-api-beta",
 		"@prisma/client": "^6.5.0",
+		"@rubriclab/events": "^0.0.23",
 		"@t3-oss/env-nextjs": "latest",
 		"drizzle-kit": "^0.30.6",
 		"drizzle-orm": "^0.41.0",
 		"next": "15.2.3",
 		"openai": "^4.98.0",
-		"zod": "^4.0.0-beta.20250505T195954"
+		"openai-realtime-api": "^1.0.7",
+		"openpipe": "^0.49.0",
+		"zod": "^3.25.8"
 	},
 	"peerDependencies": {
 		"typescript": "^5"
