@@ -8,5 +8,5 @@
 	},
 	"exclude": ["node_modules"],
 	"extends": "@rubriclab/config/tsconfig",
-	"include": ["**/*.ts", "**/*.tsx"]
+	"include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
 }
