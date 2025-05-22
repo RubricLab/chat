@@ -6,7 +6,8 @@
 	"devDependencies": {
 		"@rubriclab/config": "*",
 		"@rubriclab/events": "*",
-		"@types/bun": "latest"
+		"@types/bun": "latest",
+		"@types/react": "19.1.0"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.0",
@@ -14,13 +15,14 @@
 		"@t3-oss/env-nextjs": "latest",
 		"drizzle-kit": "^0.30.6",
 		"drizzle-orm": "^0.41.0",
-		"next": "15.2.3",
+		"next": "^15.3.2",
 		"zod": "3.25.17"
 	},
 	"peerDependencies": {
 		"typescript": "^5"
 	},
 	"scripts": {
-		"dev": "next dev"
+		"dev": "next dev",
+		"db:push": "drizzle-kit push"
 	}
 }
