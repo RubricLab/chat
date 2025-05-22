@@ -1,24 +1,20 @@
 'use server'
 
-import { executeAgent } from '~/agents'
-import { publish } from '~/events'
+import { createAgent } from '@rubriclab/agents/lib/agent2'
+import env from '~/env'
+import { publish } from '~/events/server'
 
-export async function sendMessage(message: string) {
-	await executeAgent(
-		[
-			{
-				role: 'user',
-				content: message
-			}
-		],
-		{
-			on: {
-				chatMessage: async ({ event }) => {
-					publish('chatMessage', {
-						event
-					})
-				}
-			}
-		}
-	)
+const { executeAgent } = createAgent({
+	openAIKey: env.OPENAI_API_KEY,
+	systemPrompt: 'You are a helpful agent that says "hi!"'
+})
+
+export async function sendMessage({ userId, message }: { userId: string; message: string }) {
+	const { answer } = await executeAgent([{ role: 'user', content: message }])
+
+	await publish({
+		channel: userId,
+		eventType: 'message',
+		payload: { role: 'assistant', content: answer }
+	})
 }

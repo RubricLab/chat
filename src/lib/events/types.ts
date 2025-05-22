@@ -1,6 +1,9 @@
 import { createEventTypes } from '@rubriclab/events'
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 export const eventTypes = createEventTypes({
-	hi: z.string()
+	message: z.object({
+		role: z.enum(['user', 'assistant']),
+		content: z.string()
+	})
 })
