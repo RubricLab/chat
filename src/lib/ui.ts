@@ -1,7 +1,7 @@
 import { RubricDesignSystem, createUI } from '@rubriclab/ui'
 
 export const {
-	Layout,
+	CreateLayout,
 	Button,
 	Card,
 	ChartBarItem,
