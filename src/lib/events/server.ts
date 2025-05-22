@@ -1,4 +1,4 @@
-import { createEventsServer } from '@rubriclab/events'
+import { createEventsServer } from '@rubriclab/events/server'
 import env from '~/env'
 import { eventTypes } from './types'
 
