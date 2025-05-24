@@ -1,13 +1,13 @@
 'use client'
 
-import { useSession } from '@rubriclab/auth/lib/client'
+import { useSession } from '~/auth/client'
 import { SignOutButton } from './signOut'
 
 export function Account() {
-	const { userId } = useSession()
+	const { user } = useSession()
 	return (
 		<div>
-			<p>signed in as {userId}</p>
+			<p>signed in as {user.email}</p>
 			<SignOutButton />
 		</div>
 	)

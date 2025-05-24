@@ -1,9 +1,9 @@
 'use client'
 
-import { useSession } from '@rubriclab/auth/lib/client'
 import { type ChangeEvent, useState } from 'react'
 import { sendMessage } from '~/(app)/ai'
 import type { WeatherEventTypes } from '~/agents/weather'
+import { useSession } from '~/auth/client'
 import { useEvents } from '~/events/client'
 
 type Message =

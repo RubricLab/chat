@@ -1,3 +1,3 @@
-import { routes } from '~/auth'
+import { routes } from '~/auth/server'
 
 export const { GET } = routes

@@ -1,5 +1,5 @@
-import { ClientAuthProvider } from '@rubriclab/auth'
 import { getSession } from '~/auth/actions'
+import { ClientAuthProvider } from '~/auth/client'
 import { CreateLayout } from '~/ui'
 
 export default CreateLayout([
