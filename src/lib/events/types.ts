@@ -1,6 +1,6 @@
 import { createEventTypes } from '@rubriclab/events'
-import { weatherAgentEventTypes } from '~/agents/weather'
+import { uiAgentEventTypes } from '~/agents/ui'
 
 export const eventTypes = createEventTypes({
-	...weatherAgentEventTypes
+	...uiAgentEventTypes
 })

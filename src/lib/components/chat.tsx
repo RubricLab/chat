@@ -2,12 +2,13 @@
 
 import { type ChangeEvent, useState } from 'react'
 import { sendMessage } from '~/(app)/ai'
-import type { WeatherEventTypes } from '~/agents/weather'
+import type { UIEventTypes } from '~/agents/ui'
 import { useSession } from '~/auth/client'
+import { render } from '~/blocks'
 import { useEvents } from '~/events/client'
 
 type Message =
-	| WeatherEventTypes
+	| UIEventTypes
 	| {
 			id: string
 			type: 'user_message'
@@ -44,24 +45,24 @@ function ChatBox({
 	)
 }
 
-function Message({ message }: { message: Message }) {
+function MessageSwitch({ message }: { message: Message }) {
 	switch (message.type) {
 		case 'user_message': {
 			return <div>{message.message}</div>
 		}
 
 		case 'assistant_message': {
-			return <div>{message.message.forecast.message}</div>
+			return <div>{render(message.message.ui)}</div>
 		}
 
-		case 'function_call': {
-			return (
-				<div>
-					called {message.name} with {JSON.stringify(message.arguments)} and got{' '}
-					{JSON.stringify(message.result)}
-				</div>
-			)
-		}
+		// case 'function_call': {
+		// 	return (
+		// 		<div>
+		// 			called {message.name} with {JSON.stringify(message.arguments)} and got{' '}
+		// 			{JSON.stringify(message.result)}
+		// 		</div>
+		// 	)
+		// }
 	}
 }
 
@@ -77,9 +78,9 @@ function ChatMessages({
 	useEvents({
 		id: userId,
 		on: {
-			getWeather: msg => {
-				addMessage(msg)
-			},
+			// heading: msg => {
+			// 	addMessage(msg)
+			// },
 			assistant_message: msg => {
 				addMessage(msg)
 			}
@@ -89,7 +90,7 @@ function ChatMessages({
 	return (
 		<div>
 			{messages.map(message => (
-				<Message key={message.id} message={message} />
+				<MessageSwitch key={message.id} message={message} />
 			))}
 		</div>
 	)
