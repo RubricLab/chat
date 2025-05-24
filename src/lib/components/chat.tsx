@@ -1,15 +1,22 @@
 'use client'
 
 import { useSession } from '@rubriclab/auth/lib/client'
-import type { ResponseInputItem } from 'openai/resources/responses/responses'
 import { type ChangeEvent, useState } from 'react'
 import { sendMessage } from '~/(app)/ai'
+import type { WeatherEventTypes } from '~/agents/weather'
 import { useEvents } from '~/events/client'
+
+type Message =
+	| WeatherEventTypes
+	| {
+			type: 'user_message'
+			message: string
+	  }
 
 function ChatBox({
 	userId,
 	addMessage
-}: { userId: string; addMessage: (message: ResponseInputItem) => void }) {
+}: { userId: string; addMessage: (message: Message) => void }) {
 	const [message, setMessage] = useState('')
 
 	function handleInput({ target: { value } }: ChangeEvent<HTMLInputElement>) {
@@ -18,8 +25,8 @@ function ChatBox({
 
 	function handleSubmit() {
 		addMessage({
-			role: 'user',
-			content: message
+			type: 'user_message',
+			message
 		})
 		sendMessage({ userId, message })
 		setMessage('')
@@ -35,35 +42,23 @@ function ChatBox({
 	)
 }
 
-function Message({ message }: { message: ResponseInputItem }) {
+function Message({ message }: { message: Message }) {
 	switch (message.type) {
-		case 'message': {
-			if (Array.isArray(message.content)) {
-				return (
-					<div>
-						{message.content.map(part => {
-							switch (part.type) {
-								case 'input_text':
-									return <div>{part.text}</div>
-								case 'output_text':
-									return <div>{part.text}</div>
-								case 'input_file':
-									return <div>{part.filename}</div>
-								case 'input_image':
-									return <img src={part.image_url ?? undefined} alt={part.file_id ?? undefined} />
-								case 'refusal':
-									return <div>{part.refusal}</div>
-							}
-						})}
-					</div>
-				)
-			}
-
-			return <div>{message.content}</div>
+		case 'user_message': {
+			return <div>{message.message}</div>
 		}
 
-		default: {
-			return <div>{JSON.stringify(message)}</div>
+		case 'assistant_message': {
+			return <div>{message.message.forecast.message}</div>
+		}
+
+		case 'function_call': {
+			return (
+				<div>
+					called {message.name} with {JSON.stringify(message.arguments)} and got{' '}
+					{JSON.stringify(message.result)}
+				</div>
+			)
 		}
 	}
 }
@@ -74,13 +69,18 @@ function ChatMessages({
 	addMessage
 }: {
 	userId: string
-	messages: ResponseInputItem[]
-	addMessage: (message: ResponseInputItem) => void
+	messages: Message[]
+	addMessage: (message: Message) => void
 }) {
 	useEvents({
 		id: userId,
 		on: {
-			message: addMessage
+			getWeather: msg => {
+				addMessage(msg)
+			},
+			assistant_message: msg => {
+				addMessage(msg)
+			}
 		}
 	})
 
@@ -95,16 +95,16 @@ function ChatMessages({
 
 export function Chat() {
 	const { userId } = useSession()
-	const [messages, setMessages] = useState<ResponseInputItem[]>([])
+	const [messages, setMessages] = useState<Message[]>([])
 
-	function addMessage(message: ResponseInputItem) {
+	function addMessage(message: Message) {
 		setMessages(prev => [...prev, message])
 	}
 
 	return (
 		<>
-			<ChatBox userId={userId} addMessage={addMessage} />
-			<ChatMessages userId={userId} messages={messages} addMessage={addMessage} />
+			{ChatBox({ userId, addMessage })}
+			{ChatMessages({ userId, messages, addMessage })}
 		</>
 	)
 }
