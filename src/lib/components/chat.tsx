@@ -9,6 +9,7 @@ import { useEvents } from '~/events/client'
 type Message =
 	| WeatherEventTypes
 	| {
+			id: string
 			type: 'user_message'
 			message: string
 	  }
@@ -25,6 +26,7 @@ function ChatBox({
 
 	function handleSubmit() {
 		addMessage({
+			id: Date.now().toString(),
 			type: 'user_message',
 			message
 		})
@@ -86,8 +88,8 @@ function ChatMessages({
 
 	return (
 		<div>
-			{messages.map((message, index) => (
-				<Message key={`message-${index}`} message={message} />
+			{messages.map(message => (
+				<Message key={message.id} message={message} />
 			))}
 		</div>
 	)
@@ -103,8 +105,8 @@ export function Chat() {
 
 	return (
 		<>
-			{ChatBox({ userId, addMessage })}
-			{ChatMessages({ userId, messages, addMessage })}
+			<ChatBox userId={userId} addMessage={addMessage} />
+			<ChatMessages userId={userId} messages={messages} addMessage={addMessage} />
 		</>
 	)
 }
