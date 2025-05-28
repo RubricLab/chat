@@ -12,11 +12,12 @@
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.0",
 		"@prisma/client": "^6.5.0",
+		"@rubriclab/chains": "*",
 		"@t3-oss/env-nextjs": "latest",
 		"drizzle-kit": "^0.30.6",
 		"drizzle-orm": "^0.41.0",
 		"next": "^15.3.2",
-		"zod": "3.25.21"
+		"zod": "latest"
 	},
 	"peerDependencies": {
 		"typescript": "^5"
