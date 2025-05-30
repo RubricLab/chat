@@ -1,11 +1,11 @@
 'use client'
 
-import { type ChangeEvent, useState } from 'react'
+import { type ChangeEvent, type ReactElement, type ReactNode, useEffect, useState } from 'react'
 import { sendMessage } from '~/(app)/ai'
 import type { UIEventTypes } from '~/agents/ui'
 import { useSession } from '~/auth/client'
-import { render } from '~/blocks'
 import { useEvents } from '~/events/client'
+import { drill } from '~/utils/drill'
 
 type Message =
 	| UIEventTypes
@@ -45,6 +45,20 @@ function ChatBox({
 	)
 }
 
+function RenderChain({ chain }: { chain: UIEventTypes['message']['chain'] }) {
+	const [UI, setUi] = useState<ReactNode | null>(null)
+	useEffect(() => {
+		;(async function fetchUi() {
+			const output = await drill({ chain })
+			setUi(output)
+		})()
+	}, [chain])
+
+	if (!UI) return null
+
+	return <div>{UI}</div>
+}
+
 function MessageSwitch({ message }: { message: Message }) {
 	switch (message.type) {
 		case 'user_message': {
@@ -52,7 +66,7 @@ function MessageSwitch({ message }: { message: Message }) {
 		}
 
 		case 'assistant_message': {
-			return <div>{render(message.message.ui)}</div>
+			return <RenderChain chain={message.message.chain} />
 		}
 
 		// case 'function_call': {

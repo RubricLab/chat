@@ -23,6 +23,7 @@
 		"typescript": "^5"
 	},
 	"scripts": {
+		"build": "next build",
 		"dev": "next dev",
 		"db:push": "drizzle-kit push"
 	}

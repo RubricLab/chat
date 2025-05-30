@@ -6,7 +6,7 @@ import { executeUIAgent } from '~/agents/ui'
 import { publish } from '~/events/server'
 
 export async function sendMessage({ userId, message }: { userId: string; message: string }) {
-	const { ui } = await executeUIAgent({
+	const { chain } = await executeUIAgent({
 		messages: [{ role: 'user', content: message }],
 		onEvent: async events => {
 			switch (events.type) {
@@ -29,5 +29,5 @@ export async function sendMessage({ userId, message }: { userId: string; message
 		openAIKey: env.OPENAI_API_KEY
 	})
 
-	console.dir({ ui }, { depth: null })
+	console.dir({ chain }, { depth: null })
 }
