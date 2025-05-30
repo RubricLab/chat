@@ -1,7 +1,7 @@
 import { createAction } from '@rubriclab/actions'
 import { createAgent } from '@rubriclab/agents/lib/agent2'
 import { createResponseFormat } from '@rubriclab/agents/lib/responseFormat'
-import { createChain, stableHash } from '@rubriclab/chains'
+import { createChain } from '@rubriclab/chains'
 import { z } from 'zod/v4'
 import env from '~/env'
 
@@ -32,55 +32,31 @@ const stringify = createAction({
 	}
 })
 
-const { nodes } = createChain({
-	addNumbers,
-	stringify
+const { definitions, compatabilities } = createChain({
+	addNumbers: addNumbers.schema,
+	stringify: stringify.schema
 })
 
-const t = z.union(nodes)
+const defs = Object.entries(definitions).map(([name, { definition }]) => {
+	definition.register(chainRegistry, { id: name })
+	return definition
+})
 
-const zoo: z.infer<typeof t> = {
-	node: 'addNumbers',
-	input: {
-		number1: {
-			node: 'addNumbers',
-			input: {
-				number1: 1,
-				number2: 2
-			}
-		},
-		number2: {
-			node: 'addNumbers',
-			input: {
-				number1: 1,
-				number2: 2
-			}
+const comps = Object.entries(compatabilities).map(([node, input]) => {
+	Object.entries(input).map(([key, value]) => {
+		console.log(key, value)
+		try {
+			value.zod.register(chainRegistry, { id: JSON.stringify(value.shape) })
+		} catch (e) {
+			console.error(e)
 		}
-	}
-}
-
-// const registeredNodes = await Promise.all(
-// 	nodes.map(async node => {
-// 		node.register(chainRegistry, { id: node.shape.node.value })
-// 		await Promise.all(
-// 			Object.entries(node.shape.input.shape).map(async ([key, value]) => {
-// 				const id = `${await stableHash(value)}`
-// 				try {
-// 					value.register(chainRegistry, { id })
-// 				} catch (e) {
-// 					console.error(e)
-// 				}
-// 			})
-// 		)
-
-// 		return node
-// 	})
-// )
+	})
+})
 
 const responseFormat = createResponseFormat({
 	name: 'chain',
 	schema: z.object({
-		chain: z.union(nodes)
+		chain: z.union(defs)
 	}),
 	registry: chainRegistry
 })
@@ -92,6 +68,7 @@ export const {
 	eventTypes: chainAgentEventTypes,
 	__Event
 } = createAgent({
+	model: 'o4-mini',
 	systemPrompt: 'You are a helpful agent that tells us the weather in new york.',
 	tools: {},
 	responseFormat
@@ -102,7 +79,7 @@ const out = await executeChainAgent({
 	messages: [
 		{
 			role: 'user',
-			content: 'add 4 numbers together'
+			content: 'add 6 numbers together and then stringify the result'
 		}
 	],
 	onEvent: () => {}
