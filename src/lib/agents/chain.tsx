@@ -32,19 +32,35 @@ const stringify = createAction({
 	}
 })
 
+const sendEmail = createAction({
+	schema: {
+		input: {
+			contact: z.object({
+				name: z.string(),
+				email: z.string()
+			}),
+			message: z.string()
+		},
+		output: z.string()
+	},
+	execute: async ({ contact, message }) => {
+		return `Sending email to ${contact.email} with message: ${message}`
+	}
+})
+
 const { definitions, compatabilities } = createChain({
 	addNumbers: addNumbers.schema,
-	stringify: stringify.schema
+	stringify: stringify.schema,
+	sendEmail: sendEmail.schema
 })
 
-const defs = Object.entries(definitions).map(([name, { definition }]) => {
-	definition.register(chainRegistry, { id: name })
-	return definition
-})
+for (const definition of definitions) {
+	definition.register(chainRegistry, { id: definition.shape.node.value })
+}
 
-const comps = Object.entries(compatabilities).map(([node, input]) => {
+const comps = Object.entries(compatabilities).map(([_, input]) => {
 	Object.entries(input).map(([key, value]) => {
-		console.log(key, value)
+		console.log(key, value.shape)
 		try {
 			value.zod.register(chainRegistry, { id: JSON.stringify(value.shape) })
 		} catch (e) {
@@ -56,7 +72,7 @@ const comps = Object.entries(compatabilities).map(([node, input]) => {
 const responseFormat = createResponseFormat({
 	name: 'chain',
 	schema: z.object({
-		chain: z.union(defs)
+		chain: z.union(definitions)
 	}),
 	registry: chainRegistry
 })
@@ -68,21 +84,35 @@ export const {
 	eventTypes: chainAgentEventTypes,
 	__Event
 } = createAgent({
-	model: 'o4-mini',
-	systemPrompt: 'You are a helpful agent that tells us the weather in new york.',
+	model: 'gpt-4.1',
+	systemPrompt: '',
 	tools: {},
 	responseFormat
 })
 
-const out = await executeChainAgent({
+const { chain } = await executeChainAgent({
 	openAIKey: env.OPENAI_API_KEY,
 	messages: [
 		{
 			role: 'user',
-			content: 'add 6 numbers together and then stringify the result'
+			content: 'send an email to john@doe.com with the message "hello"'
 		}
 	],
 	onEvent: () => {}
 })
 
-console.dir(out, { depth: null })
+switch (chain.node) {
+	case 'addNumbers':
+		console.log(chain.input.number1)
+		break
+	case 'stringify':
+		console.log(chain.input.number)
+		if (chain.input.number instanceof Object && 'node' in chain.input.number) {
+			console.log('is number', chain.input.number.input.number1)
+		} else {
+			chain.input.number
+		}
+		break
+	case 'sendEmail':
+		console.log(chain.input.message)
+}
