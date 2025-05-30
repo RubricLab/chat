@@ -14,6 +14,16 @@ const getContacts = createAction({
 	execute: async () => [{ name: 'John Doe', email: 'john.doe@example.com' }]
 })
 
+const stringify = createAction({
+	schema: {
+		input: {
+			number: z.number()
+		},
+		output: z.string()
+	},
+	execute: async ({ number }) => number.toString()
+})
+
 const sendEmail = createAction({
 	schema: {
 		input: {
@@ -28,8 +38,9 @@ const sendEmail = createAction({
 })
 
 export const actions = {
-	getContacts,
-	sendEmail
+	// getContacts,
+	// sendEmail,
+	stringify
 }
 
 export type Actions = typeof actions

@@ -35,7 +35,7 @@ for (const input of Object.values(compatabilities)) {
 const responseFormat = createResponseFormat({
 	name: 'chain',
 	schema: z.object({
-		chain: z.array(z.union(definitions)).min(1)
+		chain: z.union(definitions)
 	}),
 	registry: uiRegistry
 })

@@ -2,6 +2,7 @@
 
 import env from '~/env'
 
+import { z } from 'zod/v4'
 import { executeUIAgent } from '~/agents/ui'
 import { publish } from '~/events/server'
 
@@ -28,6 +29,38 @@ export async function sendMessage({ userId, message }: { userId: string; message
 		},
 		openAIKey: env.OPENAI_API_KEY
 	})
+
+	const thing: typeof chain = {
+		node: 'addNumbers',
+		input: {
+			number1: 1,
+			number2: {
+				node: 'addNumbers',
+				input: {
+					number1: {
+						node: 'addNumbers',
+						input: {
+							number1: {
+								node: 'addNumbers',
+								input: {
+									number1: 2,
+									number2: 3
+								}
+							},
+							number2: {
+								node: 'addNumbers',
+								input: {
+									number1: 4,
+									number2: 5
+								}
+							}
+						}
+					},
+					number2: 3
+				}
+			}
+		}
+	}
 
 	console.dir({ chain }, { depth: null })
 }

@@ -20,6 +20,14 @@ const textInput = createBlock({
 	render: (_, { emit }) => <input onChange={e => emit(e.target.value)} type="text" />
 })
 
+const numberInput = createBlock({
+	schema: {
+		input: {},
+		output: z.number()
+	},
+	render: (_, { emit }) => <input onChange={e => emit(Number(e.target.value))} type="number" />
+})
+
 const contactSelect = createBlock({
 	schema: {
 		input: {
@@ -63,8 +71,10 @@ const contactForm = createBlock({
 export const blocks = {
 	heading,
 	textInput,
-	contactSelect,
-	contactForm
+	// contactSelect,
+	// contactForm
+	// returnsBoolean,
+	numberInput
 }
 
 export type Blocks = typeof blocks
