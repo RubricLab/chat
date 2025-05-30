@@ -24,12 +24,8 @@ for (const definition of definitions) {
 	definition.register(uiRegistry, { id: definition.shape.node.value })
 }
 
-for (const input of Object.values(compatabilities)) {
-	for (const { zod, shape } of Object.values(input)) {
-		try {
-			zod.register(uiRegistry, { id: JSON.stringify(shape) })
-		} catch {}
-	}
+for (const { shape, schema } of compatabilities) {
+	schema.register(uiRegistry, { id: JSON.stringify(shape) })
 }
 
 const responseFormat = createResponseFormat({
