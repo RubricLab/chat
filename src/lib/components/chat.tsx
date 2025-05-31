@@ -2,10 +2,14 @@
 
 import { type ChangeEvent, type ReactElement, type ReactNode, useEffect, useState } from 'react'
 import { sendMessage } from '~/(app)/ai'
+import { actions } from '~/actions'
+import { execute } from '~/actions/server'
 import type { UIEventTypes } from '~/agents/ui'
+import { drill } from '~/agents/ui'
 import { useSession } from '~/auth/client'
+import { blocks } from '~/blocks'
+import { render } from '~/blocks/client'
 import { useEvents } from '~/events/client'
-import { drill } from '~/utils/drill'
 
 type Message =
 	| UIEventTypes
@@ -49,7 +53,16 @@ function RenderChain({ chain }: { chain: UIEventTypes['message']['chain'] }) {
 	const [UI, setUi] = useState<ReactNode | null>(null)
 	useEffect(() => {
 		;(async function fetchUi() {
-			const output = await drill({ chain })
+			const output = await drill(chain, key => {
+				if (key in blocks) {
+					return async input =>
+						await render({ block: key as keyof typeof blocks, props: input, emit() {} })
+				}
+				if (key in actions) {
+					return async input => await execute({ action: key as keyof typeof actions, params: input })
+				}
+				throw 'up'
+			})
 			setUi(output)
 		})()
 	}, [chain])

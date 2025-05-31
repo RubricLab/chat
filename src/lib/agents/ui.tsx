@@ -8,14 +8,14 @@ import { blocks } from '~/blocks'
 const uiRegistry = z.registry<{ id: string }>()
 
 const blockSchemas = Object.fromEntries(
-	Object.entries(blocks).map(([key, value]) => [key, value.schema])
+	Object.entries(blocks).map(([key, { schema }]) => [key, schema])
 ) as { [K in keyof typeof blocks]: (typeof blocks)[K]['schema'] }
 
 const actionSchemas = Object.fromEntries(
-	Object.entries(actions).map(([key, value]) => [key, value.schema])
+	Object.entries(actions).map(([key, { schema }]) => [key, schema])
 ) as { [K in keyof typeof actions]: (typeof actions)[K]['schema'] }
 
-const { definitions, compatabilities } = createChain({
+const { definitions, compatabilities, drill } = createChain({
 	...blockSchemas,
 	...actionSchemas
 })
@@ -50,3 +50,5 @@ export const {
 })
 
 export type UIEventTypes = typeof __Event
+
+export { drill }
