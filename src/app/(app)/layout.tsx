@@ -1,12 +1,11 @@
 import { getSession } from '~/auth/actions'
 import { ClientAuthProvider } from '~/auth/client'
-import { CreateLayout } from '~/ui'
+import { Layout } from '~/ui'
 
-export default CreateLayout([
-	[
-		ClientAuthProvider,
-		async () => ({
-			session: await getSession({ redirectUnauthorized: '/signin' })
-		})
-	]
-])
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+	return (
+		<ClientAuthProvider session={await getSession({ redirectUnauthorized: '/signin' })}>
+			<Layout>{children}</Layout>
+		</ClientAuthProvider>
+	)
+}

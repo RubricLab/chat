@@ -1,6 +1,6 @@
 'use client'
 
-import { type ChangeEvent, type ReactElement, type ReactNode, useEffect, useState } from 'react'
+import { type ChangeEvent, type ReactNode, useEffect, useState } from 'react'
 import { sendMessage } from '~/(app)/ai'
 import { actions } from '~/actions'
 import { execute } from '~/actions/server'
@@ -69,7 +69,8 @@ function RenderChain({ chain }: { chain: UIEventTypes['message']['chain'] }) {
 
 	if (!UI) return null
 
-	return <div>{UI}</div>
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	return <div>{UI as any}</div>
 }
 
 function MessageSwitch({ message }: { message: Message }) {

@@ -25,7 +25,11 @@ for (const definition of definitions) {
 }
 
 for (const { shape, schema } of compatabilities) {
-	schema.register(uiRegistry, { id: JSON.stringify(shape) })
+	try {
+		schema.register(uiRegistry, { id: JSON.stringify(shape) })
+	} catch (e) {
+		console.error(e)
+	}
 }
 
 const responseFormat = createResponseFormat({

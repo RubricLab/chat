@@ -1,4 +1,4 @@
-import { createBlock, createBlockRenderer } from '@rubriclab/blocks'
+import { createBlock } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import { contact } from '~/actions'
 
@@ -61,7 +61,7 @@ const contactForm = createBlock({
 		},
 		output: z.void()
 	},
-	render: (_, { emit }) => (
+	render: (_, { emit: _emit }) => (
 		<form>
 			<button type="submit">Send</button>
 		</form>
@@ -71,9 +71,8 @@ const contactForm = createBlock({
 export const blocks = {
 	heading,
 	textInput,
-	// contactSelect,
-	// contactForm
-	// returnsBoolean,
+	contactSelect,
+	contactForm,
 	numberInput
 }
 

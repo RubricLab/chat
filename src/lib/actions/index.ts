@@ -38,8 +38,8 @@ const sendEmail = createAction({
 })
 
 export const actions = {
-	// getContacts,
-	// sendEmail,
+	getContacts,
+	sendEmail,
 	stringify
 }
 

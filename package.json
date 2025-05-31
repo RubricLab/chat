@@ -6,8 +6,7 @@
 	"devDependencies": {
 		"@rubriclab/config": "*",
 		"@rubriclab/events": "*",
-		"@types/bun": "latest",
-		"@types/react": "19.1.0"
+		"@types/bun": "latest"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.0",

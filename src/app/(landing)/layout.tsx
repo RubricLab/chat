@@ -1,3 +1,5 @@
-import { CreateLayout } from '~/ui'
+import { Layout } from '~/ui'
 
-export default CreateLayout()
+export default function LandingLayout({ children }: { children: React.ReactNode }) {
+	return <Layout>{children}</Layout>
+}
