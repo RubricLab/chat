@@ -8,7 +8,9 @@ import type { UIEventTypes } from '~/agents/ui'
 import { drill } from '~/agents/ui'
 import { useSession } from '~/auth/client'
 import { blocks } from '~/blocks'
+// import { blocks } from '~/blocks'
 import { render } from '~/blocks/client'
+import { genericBlocks } from '~/blocks/generics'
 import { useEvents } from '~/events/client'
 
 type Message =
@@ -61,6 +63,20 @@ function RenderChain({ chain }: { chain: UIEventTypes['message']['chain'] }) {
 				if (key in actions) {
 					return async input => await execute({ action: key as keyof typeof actions, params: input })
 				}
+				if (key.includes('_')) {
+					const [blockName, actionName] = key.split('_')
+					if (blockName && actionName && blockName in genericBlocks && actionName in actions) {
+						const block = genericBlocks[blockName as keyof typeof genericBlocks]
+						return async input => {
+							return (await block.execute({ actionName: actionName as keyof typeof actions })).render(
+								input,
+								{
+									emit: () => {}
+								}
+							)
+						}
+					}
+				}
 				throw 'up'
 			})
 			setUi(output)
@@ -69,8 +85,7 @@ function RenderChain({ chain }: { chain: UIEventTypes['message']['chain'] }) {
 
 	if (!UI) return null
 
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	return <div>{UI as any}</div>
+	return <div>{UI}</div>
 }
 
 function MessageSwitch({ message }: { message: Message }) {
@@ -83,14 +98,14 @@ function MessageSwitch({ message }: { message: Message }) {
 			return <RenderChain chain={message.message.chain} />
 		}
 
-		// case 'function_call': {
-		// 	return (
-		// 		<div>
-		// 			called {message.name} with {JSON.stringify(message.arguments)} and got{' '}
-		// 			{JSON.stringify(message.result)}
-		// 		</div>
-		// 	)
-		// }
+		case 'function_call': {
+			return (
+				<div>
+					called {message.name} with {JSON.stringify(message.arguments)} and got{' '}
+					{JSON.stringify(message.result)}
+				</div>
+			)
+		}
 	}
 }
 

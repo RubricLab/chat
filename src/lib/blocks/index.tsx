@@ -1,6 +1,9 @@
-import { createBlock } from '@rubriclab/blocks'
+import { createBlock, createStatefulBlock } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import { contact } from '~/actions'
+import { ContactSelect } from './react/contactSelect'
+import { NumberInput } from './react/numberInput'
+import { TextInput } from './react/textInput'
 
 const heading = createBlock({
 	schema: {
@@ -9,71 +12,44 @@ const heading = createBlock({
 		},
 		output: z.string()
 	},
-	render: ({ message }) => <h1>{message}</h1>
+	render: ({ message }) => <h1>{message}</h1>,
+	description: undefined
 })
 
-const textInput = createBlock({
+const textInput = createStatefulBlock({
 	schema: {
 		input: {},
 		output: z.string()
 	},
-	render: (_, { emit }) => <input onChange={e => emit(e.target.value)} type="text" />
+	render: _ => TextInput(),
+	description: undefined
 })
 
-const numberInput = createBlock({
+const numberInput = createStatefulBlock({
 	schema: {
 		input: {},
 		output: z.number()
 	},
-	render: (_, { emit }) => <input onChange={e => emit(Number(e.target.value))} type="number" />
+	render: _ => NumberInput(),
+	description: undefined
 })
 
-const contactSelect = createBlock({
+const contactSelect = createStatefulBlock({
 	schema: {
 		input: {
 			contacts: z.array(contact)
 		},
 		output: contact
 	},
-	render: ({ contacts }, { emit }) => (
-		<select
-			onChange={e => {
-				const contact = contacts.find(c => c.email === e.target.value)
-				if (contact) {
-					emit(contact)
-				}
-			}}
-		>
-			{contacts.map(contact => (
-				<option key={contact.email} value={contact.email}>
-					{contact.name}
-				</option>
-			))}
-		</select>
-	)
-})
-
-const contactForm = createBlock({
-	schema: {
-		input: {
-			contact,
-			content: z.string()
-		},
-		output: z.void()
-	},
-	render: (_, { emit: _emit }) => (
-		<form>
-			<button type="submit">Send</button>
-		</form>
-	)
+	render: ({ contacts }) => ContactSelect({ contacts }),
+	description: undefined
 })
 
 export const blocks = {
 	heading,
 	textInput,
 	contactSelect,
-	contactForm,
 	numberInput
-}
+} as const
 
 export type Blocks = typeof blocks

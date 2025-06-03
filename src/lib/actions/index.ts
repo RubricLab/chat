@@ -11,7 +11,8 @@ const getContacts = createAction({
 		input: {},
 		output: z.array(contact)
 	},
-	execute: async () => [{ name: 'John Doe', email: 'john.doe@example.com' }]
+	execute: async () => [{ name: 'John Doe', email: 'john.doe@example.com' }],
+	description: undefined
 })
 
 const stringify = createAction({
@@ -21,7 +22,8 @@ const stringify = createAction({
 		},
 		output: z.string()
 	},
-	execute: async ({ number }) => number.toString()
+	execute: async ({ number }) => number.toString(),
+	description: undefined
 })
 
 const sendEmail = createAction({
@@ -34,13 +36,14 @@ const sendEmail = createAction({
 	},
 	execute: async ({ content }) => {
 		return `Sending email with content: ${content}`
-	}
+	},
+	description: undefined
 })
 
 export const actions = {
 	getContacts,
 	sendEmail,
 	stringify
-}
+} as const
 
 export type Actions = typeof actions
