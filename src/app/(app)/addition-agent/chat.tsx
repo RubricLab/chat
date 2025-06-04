@@ -19,14 +19,19 @@ function ChatBox({ addMessage }: { addMessage: (message: Message) => void }) {
 		setMessage(value)
 	}
 
-	function handleSubmit() {
+	async function handleSubmit() {
 		addMessage({
 			id: Date.now().toString(),
 			type: 'user_message',
 			message
 		})
-		sendMessage({ message })
 		setMessage('')
+		const answer = await sendMessage({ message })
+		addMessage({
+			id: Date.now().toString(),
+			type: 'assistant_message',
+			message: { answer }
+		})
 	}
 
 	return (
