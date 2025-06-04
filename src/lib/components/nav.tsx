@@ -6,18 +6,10 @@ import { SignOutButton } from './signOut'
 export function Nav() {
 	const { user } = useSession()
 	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'row',
-				justifyContent: 'space-between',
-				alignItems: 'center',
-				gap: '10px'
-			}}
-		>
-			<a href="/">Chat</a>
-			<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-				<p>signed in as {user.email}</p>
+		<div className="flex flex-row items-center justify-between gap-4 p-4">
+			<a href="/">Home</a>
+			<div className="flex flex-row items-center gap-4">
+				<p>Signed in as {user.email}</p>
 				<SignOutButton />
 			</div>
 		</div>

@@ -1,37 +1,63 @@
 'use client'
 
+import type { ReactNode } from 'react'
+
+const AgentRow = ({
+	href,
+	name,
+	description,
+	source
+}: { href: string; name: string; description: ReactNode; source: string }) => (
+	<tr className="border-gray-200 border-b">
+		<td className="px-8 py-2">
+			<a href={href}>{name}</a>
+		</td>
+		<td className="px-8 py-2">{description}</td>
+		<td className="px-8 py-2">
+			<a href={source}>Source Code</a>
+		</td>
+	</tr>
+)
+
 export default function () {
 	return (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-			<h1>Agents</h1>
-
-			<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-				<h3>
-					<a href="/addition-agent">Addition Agent</a>
-				</h3>
-				<p>Ultra simple demo of a tool-using agent using server actions.</p>
-			</div>
-			<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-				<h3>
-					<a href="/weather-agent">Weather Agent</a>
-				</h3>
-				<p>A tool use agent that uses events to show the progress of the agent.</p>
-			</div>
-			<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-				<h3>
-					<a href="/research-agent">Research Agent</a>
-				</h3>
-				<p>An agent that has tools AND a custom response format</p>
-			</div>
-			<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-				<h3>
-					<a href="/db-agent">Db Agent</a>
-				</h3>
-				<p>
-					An agent that uses the <a href="https://github.com/rubriclab/actions">@rubriclab/actions</a>{' '}
-					package to interact with a database.
-				</p>
-			</div>
-		</div>
+		<table>
+			<tbody>
+				<AgentRow
+					href="/addition-agent"
+					name="Addition Agent"
+					description="Simple tool-using agent demo"
+					source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/addition-agent"
+				/>
+				<AgentRow
+					href="/weather-agent"
+					name="Weather Agent"
+					description={
+						<>
+							Agent with progress tracking using{' '}
+							<a href="https://github.com/rubriclab/actions">@rubriclab/events</a>
+						</>
+					}
+					source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/weather-agent"
+				/>
+				<AgentRow
+					href="/research-agent"
+					name="Research Agent"
+					description="Agent with tools and custom response format"
+					source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/research-agent"
+				/>
+				<AgentRow
+					href="/db-agent"
+					name="Db Agent"
+					description={
+						<>
+							Database interaction agent. Uses{' '}
+							<a href="https://github.com/rubriclab/actions">@rubriclab/actions</a>
+						</>
+					}
+					source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/db-agent"
+				/>
+			</tbody>
+		</table>
 	)
 }

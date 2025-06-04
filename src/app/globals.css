@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+a,
+button {
+	@apply underline underline-offset-4;
+}
+
+html {
+	@apply dark:bg-black dark:text-white;
+}
