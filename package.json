@@ -15,6 +15,7 @@
 		"@t3-oss/env-nextjs": "latest",
 		"drizzle-kit": "^0.30.6",
 		"drizzle-orm": "^0.41.0",
+		"exa-js": "^1.8.2",
 		"next": "^15.3.2",
 		"zod": "latest"
 	},
