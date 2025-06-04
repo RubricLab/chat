@@ -1,0 +1,53 @@
+function JsonTree({ data }: { data: JSON }) {
+	if (data === null) return <span className="text-gray-500 dark:text-gray-400">null</span>
+	if (typeof data === 'boolean')
+		return <span className="text-blue-600 dark:text-blue-400">{String(data)}</span>
+	if (typeof data === 'number')
+		return <span className="text-green-600 dark:text-green-400">{data}</span>
+	if (typeof data === 'string')
+		return <span className="text-red-600 dark:text-red-400">"{data}"</span>
+
+	if (Array.isArray(data)) {
+		if (data.length === 0) return <span>[]</span>
+		return (
+			<div>
+				<span>[</span>
+				{data.map((item, i) => (
+					<div key={i} className="ml-6">
+						<JsonTree data={item} />
+						{i < data.length - 1 && ','}
+					</div>
+				))}
+				<span>]</span>
+			</div>
+		)
+	}
+
+	if (typeof data === 'object' && data !== null) {
+		const entries = Object.entries(data)
+		if (entries.length === 0) return <span>{'{}'}</span>
+
+		return (
+			<div>
+				<span>{'{'}</span>
+				{entries.map(([key, value], i) => (
+					<div key={key} className="ml-6">
+						<span className="text-blue-800 dark:text-blue-300">"{key}"</span>: <JsonTree data={value} />
+						{i < entries.length - 1 && ','}
+					</div>
+				))}
+				<span>{'}'}</span>
+			</div>
+		)
+	}
+
+	return <span>{String(data)}</span>
+}
+
+export function Code({ json }: { json: JSON }) {
+	return (
+		<pre className="rounded-xl bg-neutral-100 p-4 font-mono text-sm dark:bg-neutral-900">
+			<JsonTree data={json} />
+		</pre>
+	)
+}
