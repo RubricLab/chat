@@ -1,5 +1,4 @@
 import { createAgent, createTool } from '@rubriclab/agents'
-import { createResponseFormat } from '@rubriclab/agents/lib/responseFormat'
 import { z } from 'zod/v4'
 
 export const { executeAgent: executeAdditionAgent, __ResponseEvent } = createAgent({
@@ -12,13 +11,7 @@ export const { executeAgent: executeAdditionAgent, __ResponseEvent } = createAge
 			},
 			execute: async ({ a, b }) => a + b
 		})
-	},
-	responseFormat: createResponseFormat({
-		name: 'addition_result',
-		schema: z.object({
-			answer: z.number()
-		})
-	})
+	}
 })
 
 export type AdditionAgentResponseEvent = typeof __ResponseEvent
