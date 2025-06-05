@@ -5,12 +5,12 @@ function JsonTree({ data }: { data: JSON }) {
 	if (typeof data === 'number')
 		return <span className="text-green-600 dark:text-green-400">{data}</span>
 	if (typeof data === 'string')
-		return <span className="text-red-600 dark:text-red-400">"{data}"</span>
+		return <span className="break-words text-red-600 dark:text-red-400">"{data}"</span>
 
 	if (Array.isArray(data)) {
 		if (data.length === 0) return <span>[]</span>
 		return (
-			<div>
+			<div className="break-words">
 				<span>[</span>
 				{data.map((item, i) => (
 					<div key={i} className="ml-6">
@@ -28,11 +28,12 @@ function JsonTree({ data }: { data: JSON }) {
 		if (entries.length === 0) return <span>{'{}'}</span>
 
 		return (
-			<div>
+			<div className="break-words">
 				<span>{'{'}</span>
 				{entries.map(([key, value], i) => (
 					<div key={key} className="ml-6">
-						<span className="text-blue-800 dark:text-blue-300">"{key}"</span>: <JsonTree data={value} />
+						<span className="break-words text-blue-800 dark:text-blue-300">"{key}"</span>:{' '}
+						<JsonTree data={value} />
 						{i < entries.length - 1 && ','}
 					</div>
 				))}
@@ -41,12 +42,12 @@ function JsonTree({ data }: { data: JSON }) {
 		)
 	}
 
-	return <span>{String(data)}</span>
+	return <span className="break-words">{String(data)}</span>
 }
 
 export function Code({ json }: { json: JSON }) {
 	return (
-		<pre className="rounded-xl bg-neutral-100 p-4 font-mono text-sm dark:bg-neutral-900">
+		<pre className="surface-code overflow-x-auto whitespace-pre-wrap break-words rounded-xl p-4 font-mono text-sm">
 			<JsonTree data={json} />
 		</pre>
 	)
