@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import type { AdditionAgentResponseEvent } from '~/addition-agent/agent'
 import { sendMessage } from '~/addition-agent/ai'
+import { ChatBox } from '~/components/chatBox'
 import { AssistantMessage, UserMessage } from '~/components/message'
-import { ChatBox } from '../../../lib/components/chatBox'
 
 type Message =
 	| AdditionAgentResponseEvent
