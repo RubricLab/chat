@@ -82,8 +82,21 @@ function MessageSwitch({ message }: { message: Message }) {
 					return (
 						<ToolMessage
 							name="research"
-							args={<>Retrieving contents of {url}</>}
-							result={<>Found {result.length} website</>}
+							args={
+								<>
+									Retrieving contents of <strong>{url}</strong>
+								</>
+							}
+							result={
+								<>
+									Reading{' '}
+									<strong>
+										<a href={result.url} target="_blank" rel="noopener noreferrer">
+											{result.title}
+										</a>
+									</strong>
+								</>
+							}
 						/>
 					)
 				}
@@ -139,7 +152,7 @@ export function Chat() {
 	return (
 		<div className="w-full">
 			<ChatMessages userId={userId} messages={messages} addMessage={addMessage} />
-			<ChatBox placeholder="What is the price of Bitcoin?" submit={handleSubmit} />
+			<ChatBox placeholder="Tell me about Rubric Labs" submit={handleSubmit} />
 		</div>
 	)
 }

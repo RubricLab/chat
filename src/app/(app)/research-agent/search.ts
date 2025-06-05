@@ -21,14 +21,22 @@ export async function search({ query, numResults }: { query: string; numResults:
 }
 
 export async function getContents({ url }: { url: string }) {
-	const { results } = await exa.getContents(url, { text: true })
+	const { results } = await exa.getContents(url, { text: true, livecrawl: 'auto' })
 	console.dir(results, { depth: null })
 
-	return results.map(({ title, text, url }) => {
+	if (!results[0]) {
 		return {
-			title,
-			content: text,
+			title: 'No results found',
+			content: 'No results found',
 			url
 		}
-	})
+	}
+
+	const { title, text } = results[0]
+
+	return {
+		title,
+		content: text,
+		url
+	}
 }
