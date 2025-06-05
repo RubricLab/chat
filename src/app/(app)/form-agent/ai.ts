@@ -11,7 +11,7 @@ export async function sendMessage({ userId, message }: { userId: string; message
 			switch (events.type) {
 				case 'function_call': {
 					switch (events.name) {
-						case 'instantiateFormTool': {
+						case 'instantiateForm': {
 							await publish({
 								channel: userId,
 								eventType: events.name,

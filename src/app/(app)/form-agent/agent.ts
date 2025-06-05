@@ -2,14 +2,35 @@ import { createActionDocs } from '@rubriclab/actions'
 import { createAgent, createTool } from '@rubriclab/agents'
 import { createResponseFormat } from '@rubriclab/agents/lib/responseFormat'
 import { createBlocksDocs } from '@rubriclab/blocks'
+import { createChain } from '@rubriclab/chains'
 import { z } from 'zod/v4'
 import { actions } from '~/form-agent/actions'
 import { blocks as __blocks, genericBlocks } from '~/form-agent/blocks'
-import { compatabilities, definitions } from '~/form-agent/chains'
 
 let blocks = __blocks
 
 function getResponseFormat() {
+	const actionSchemas = Object.fromEntries(
+		Object.entries(actions).map(([key, { schema }]) => [key, schema])
+	) as { [K in keyof typeof actions]: (typeof actions)[K]['schema'] }
+
+	const blockSchemas = Object.fromEntries(
+		Object.entries(blocks).map(([key, { schema }]) => [key, schema])
+	) as { [K in keyof typeof blocks]: (typeof blocks)[K]['schema'] }
+
+	const { definitions, compatabilities } = createChain(
+		{ ...actionSchemas, ...blockSchemas },
+		{
+			strict: true,
+			additionalCompatabilities: [
+				{
+					type: z.number(),
+					compatability: z.number()
+				}
+			]
+		}
+	)
+
 	const fullstackRegistry = z.registry<{ id: string }>()
 
 	// Register definitions
@@ -29,10 +50,9 @@ function getResponseFormat() {
 		// Pass the registry to build the recursive schema.
 		registry: fullstackRegistry
 	})
+	console.dir(responseFormat, { depth: null })
 	return responseFormat
 }
-
-console.dir(getResponseFormat(), { depth: null })
 
 const systemPrompt = `You are a state of the art form building agent.
 You will be tasked with building a UI to solve a use case.
@@ -83,12 +103,10 @@ const instantiateFormTool = createTool({
 	}
 })
 
-// console.dir(responseFormat, { depth: null })
-
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
 	systemPrompt,
 	tools: { instantiateForm: instantiateFormTool },
-	responseFormat: getResponseFormat()
+	responseFormat: getResponseFormat
 })
 
 export { eventTypes as formAgentEventTypes }

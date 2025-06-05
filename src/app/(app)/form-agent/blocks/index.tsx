@@ -1,23 +1,28 @@
-import {
-	createBlock,
-	createGenericActionExecutorBlock,
-	createStatefulBlock
-} from '@rubriclab/blocks'
+import { createBlock, createGenericActionExecutorBlock } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
-import { actions } from '../actions'
+import { actions, user } from '../actions'
 import { GenericForm } from './genericForm'
 import { TextInput } from './textInput'
+import { UserSelect } from './userSelect'
 
 // const ReactNode = z.literal('ReactNode')
 
 export const blocks = {
-	textInput: createStatefulBlock({
+	textInput: createBlock({
 		schema: {
 			input: {},
 			output: z.string()
 		},
-		render: TextInput,
+		render: (_, { emit }) => <TextInput emit={emit} />,
 		description: 'Render a text input'
+	}),
+	userSelect: createBlock({
+		schema: {
+			input: { users: z.array(user) },
+			output: user
+		},
+		render: ({ users }, { emit }) => <UserSelect users={users} emit={emit} />,
+		description: 'Render a user select'
 	})
 }
 

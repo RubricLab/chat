@@ -1,9 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-export function TextInput() {
+export function TextInput({ emit }: { emit: (value: string) => void }) {
 	const [value, setValue] = useState('')
 
-	return { state: value, react: <input onChange={e => setValue(e.target.value)} type="text" /> }
+	useEffect(() => {
+		emit(value)
+	}, [value, emit])
+
+	return <input onChange={e => setValue(e.target.value)} type="text" />
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSession } from '~/auth/client'
 import { Code } from '~/components/code'
 import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
@@ -8,7 +8,6 @@ import { sendMessage } from '~/form-agent/ai'
 import { useEvents } from '~/form-agent/events/client'
 import { ChatBox } from '../../../lib/components/chatBox'
 import type { FormAgentResponseEvent, FormAgentToolEvent } from './agent'
-import { executeChain } from './chains/execute'
 
 type Message =
 	| FormAgentToolEvent
@@ -18,15 +17,6 @@ type Message =
 			type: 'user_message'
 			message: string
 	  }
-
-function RenderChain({ chain }: { chain: FormAgentResponseEvent['message']['chain'] }) {
-	const [result, setResult] = useState<Awaited<ReturnType<typeof executeChain>> | null>(null)
-	useEffect(() => {
-		executeChain(chain).then(setResult)
-	}, [chain])
-
-	return result && `Result: ${result}`
-}
 
 function MessageSwitch({ message }: { message: Message }) {
 	switch (message.type) {
@@ -38,7 +28,7 @@ function MessageSwitch({ message }: { message: Message }) {
 			return (
 				<AssistantMessage>
 					<Code json={JSON.parse(JSON.stringify(message.message.chain))} />
-					<RenderChain chain={message.message.chain} />
+					{/* Rendering not yet implemented */}
 				</AssistantMessage>
 			)
 		}
@@ -71,6 +61,7 @@ function ChatMessages({
 	useEvents({
 		id: userId,
 		on: {
+			instantiateForm: addMessage,
 			assistant_message: addMessage
 		}
 	})
