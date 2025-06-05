@@ -8,6 +8,7 @@
 		"@rubriclab/config": "*",
 		"@rubriclab/events": "*",
 		"@types/bun": "latest",
+		"@types/react": "latest",
 		"typescript": "latest"
 	},
 	"dependencies": {
