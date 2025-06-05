@@ -9,26 +9,23 @@
 		"@types/bun": "latest"
 	},
 	"dependencies": {
-		"@neondatabase/serverless": "^1.0.0",
-		"@prisma/client": "^6.5.0",
+		"@neondatabase/serverless": "latest",
+		"@prisma/client": "latest",
 		"@rubriclab/actions": "*",
 		"@rubriclab/agents": "*",
 		"@rubriclab/blocks": "*",
 		"@rubriclab/chains": "*",
 		"@rubriclab/events": "*",
 		"@t3-oss/env-nextjs": "latest",
-		"@tailwindcss/postcss": "^4.1.8",
-		"drizzle-kit": "^0.30.6",
-		"drizzle-orm": "^0.41.0",
-		"exa-js": "^1.8.2",
-		"next": "^15.3.2",
-		"postcss": "^8.5.4",
-		"resend": "^4.5.2",
-		"tailwindcss": "^4.1.8",
+		"@tailwindcss/postcss": "latest",
+		"drizzle-kit": "latest",
+		"drizzle-orm": "latest",
+		"exa-js": "latest",
+		"next": "latest",
+		"postcss": "latest",
+		"resend": "latest",
+		"tailwindcss": "latest",
 		"zod": "latest"
-	},
-	"peerDependencies": {
-		"typescript": "^5"
 	},
 	"scripts": {
 		"build": "next build",
