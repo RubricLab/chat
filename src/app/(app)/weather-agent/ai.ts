@@ -28,5 +28,5 @@ export async function sendMessage({ userId, message }: { userId: string; message
 		openAIKey: env.OPENAI_API_KEY
 	})
 
-	// console.log(answer)
+	console.log(answer)
 }
