@@ -60,9 +60,6 @@ function ChatMessages({
 	useEvents({
 		id: userId,
 		on: {
-			ping: payload => {
-				console.log('ping', payload)
-			},
 			getUsers: addMessage,
 			assistant_message: addMessage
 		}
