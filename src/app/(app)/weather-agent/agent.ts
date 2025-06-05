@@ -8,7 +8,7 @@ const weatherTool = createTool({
 		input: { city: z.string() },
 		output: z.object({ temp: z.number(), condition: z.string() })
 	},
-	execute: async ({ city }) => ({ temp: 72, condition: 'sunny' })
+	execute: async ({ city: _city }) => ({ temp: 72, condition: 'sunny' })
 })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({

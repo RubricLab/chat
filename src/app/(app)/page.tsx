@@ -97,7 +97,7 @@ export default function () {
 					/>
 					<AgentRow
 						href="/form-agent"
-						name="Form Agent [Rendering is WIP]"
+						name="Form Agent [WIP]"
 						description={<>Form builder with generic blocks and dynamic structured chains</>}
 						source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/form-agent"
 					/>

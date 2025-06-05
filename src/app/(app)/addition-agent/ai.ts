@@ -7,8 +7,8 @@ export async function sendMessage({ message }: { message: string }) {
 	const { answer } = await executeAdditionAgent({
 		messages: [{ role: 'user', content: message }],
 		openAIKey: env.OPENAI_API_KEY,
-		onEvent: async events => {
-			console.log(events)
+		onEvent: async _events => {
+			// console.log(events)
 		}
 	})
 	return answer

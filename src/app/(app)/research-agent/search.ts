@@ -10,8 +10,6 @@ export async function search({ query, numResults }: { query: string; numResults:
 		numResults
 	})
 
-	console.dir(results, { depth: null })
-
 	return results.map(({ title, url }) => {
 		return {
 			title,
@@ -22,7 +20,6 @@ export async function search({ query, numResults }: { query: string; numResults:
 
 export async function getContents({ url }: { url: string }) {
 	const { results } = await exa.getContents(url, { text: true, livecrawl: 'auto' })
-	console.dir(results, { depth: null })
 
 	if (!results[0]) {
 		return {

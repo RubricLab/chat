@@ -50,7 +50,7 @@ function getResponseFormat() {
 		// Pass the registry to build the recursive schema.
 		registry: fullstackRegistry
 	})
-	console.dir(responseFormat, { depth: null })
+	// console.dir(responseFormat, { depth: null })
 	return responseFormat
 }
 
