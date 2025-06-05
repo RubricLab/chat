@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
-a,
-button {
+h1 {
+	@apply mb-10 text-lg font-bold;
+}
+
+a {
 	@apply underline underline-offset-4;
 }
 

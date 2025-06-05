@@ -1,8 +1,10 @@
 'use client'
 
-import { type ChangeEvent, useState } from 'react'
+import { useState } from 'react'
 import type { AdditionAgentResponseEvent } from '~/addition-agent/agent'
 import { sendMessage } from '~/addition-agent/ai'
+import { AssistantMessage, UserMessage } from '~/components/message'
+import { ChatBox } from '../../../lib/components/chatBox'
 
 type Message =
 	| AdditionAgentResponseEvent
@@ -12,52 +14,21 @@ type Message =
 			message: string
 	  }
 
-function ChatBox({ addMessage }: { addMessage: (message: Message) => void }) {
-	const [message, setMessage] = useState('What is 1 + 1?')
-
-	function handleInput({ target: { value } }: ChangeEvent<HTMLInputElement>) {
-		setMessage(value)
-	}
-
-	async function handleSubmit() {
-		addMessage({
-			id: Date.now().toString(),
-			type: 'user_message',
-			message
-		})
-		setMessage('')
-		const answer = await sendMessage({ message })
-		addMessage({
-			id: Date.now().toString(),
-			type: 'assistant_message',
-			message: { answer }
-		})
-	}
-
-	return (
-		<div>
-			<input type="text" value={message} onChange={handleInput} />
-			<button type="button" onClick={handleSubmit}>
-				Send Message
-			</button>
-		</div>
-	)
-}
 function MessageSwitch({ message }: { message: Message }) {
 	switch (message.type) {
 		case 'user_message': {
-			return <div>User: {message.message}</div>
+			return <UserMessage>{message.message}</UserMessage>
 		}
 
 		case 'assistant_message': {
-			return <div>Assistant: {message.message.answer}</div>
+			return <AssistantMessage>{message.message.answer}</AssistantMessage>
 		}
 	}
 }
 
 function ChatMessages({ messages }: { messages: Message[] }) {
 	return (
-		<div>
+		<div className="pb-16">
 			{messages.map(message => (
 				<MessageSwitch key={message.id} message={message} />
 			))}
@@ -72,10 +43,24 @@ export function Chat() {
 		setMessages(prev => [...prev, message])
 	}
 
+	async function handleSubmit(message: string) {
+		addMessage({
+			id: Date.now().toString(),
+			type: 'user_message',
+			message
+		})
+		const answer = await sendMessage({ message })
+		addMessage({
+			id: Date.now().toString(),
+			type: 'assistant_message',
+			message: { answer }
+		})
+	}
+
 	return (
-		<>
-			<ChatBox addMessage={addMessage} />
+		<div className="w-full">
 			<ChatMessages messages={messages} />
-		</>
+			<ChatBox placeholder="What is 1 + 1?" submit={handleSubmit} />
+		</div>
 	)
 }

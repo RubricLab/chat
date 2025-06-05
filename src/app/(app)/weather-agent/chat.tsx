@@ -1,10 +1,12 @@
 'use client'
 
-import { type ChangeEvent, useState } from 'react'
+import { useState } from 'react'
 import { useSession } from '~/auth/client'
+import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
 import type { WeatherAgentResponseEvent, WeatherAgentToolEvent } from '~/weather-agent/agent'
 import { sendMessage } from '~/weather-agent/ai'
 import { useEvents } from '~/weather-agent/events/client'
+import { ChatBox } from '../../../lib/components/chatBox'
 
 type Message =
 	| WeatherAgentToolEvent
@@ -15,43 +17,14 @@ type Message =
 			message: string
 	  }
 
-function ChatBox({
-	userId,
-	addMessage
-}: { userId: string; addMessage: (message: Message) => void }) {
-	const [message, setMessage] = useState('What is the weather in NYC?')
-
-	function handleInput({ target: { value } }: ChangeEvent<HTMLInputElement>) {
-		setMessage(value)
-	}
-
-	function handleSubmit() {
-		addMessage({
-			id: Date.now().toString(),
-			type: 'user_message',
-			message
-		})
-		sendMessage({ userId, message })
-		setMessage('')
-	}
-
-	return (
-		<div>
-			<input type="text" value={message} onChange={handleInput} />
-			<button type="button" onClick={handleSubmit}>
-				Send Message
-			</button>
-		</div>
-	)
-}
 function MessageSwitch({ message }: { message: Message }) {
 	switch (message.type) {
 		case 'user_message': {
-			return <div>User: {message.message}</div>
+			return <UserMessage>{message.message}</UserMessage>
 		}
 
 		case 'assistant_message': {
-			return <div>Assistant: {message.message.answer}</div>
+			return <AssistantMessage>{message.message.answer}</AssistantMessage>
 		}
 
 		case 'function_call': {
@@ -62,12 +35,19 @@ function MessageSwitch({ message }: { message: Message }) {
 						result: { temp, condition }
 					} = message
 					return (
-						<div>
-							<p>Getting weather for {city}...</p>
-							<p>
-								It is {temp}°F and {condition}
-							</p>
-						</div>
+						<ToolMessage
+							name="getWeather"
+							args={
+								<>
+									Getting weather for: <strong>{city}</strong>
+								</>
+							}
+							result={
+								<>
+									It is <strong>{temp}°F</strong> and <strong>{condition}</strong>
+								</>
+							}
+						/>
 					)
 				}
 			}
@@ -93,7 +73,7 @@ function ChatMessages({
 	})
 
 	return (
-		<div>
+		<div className="pb-16">
 			{messages.map(message => (
 				<MessageSwitch key={message.id} message={message} />
 			))}
@@ -109,10 +89,19 @@ export function Chat() {
 		setMessages(prev => [...prev, message])
 	}
 
+	function handleSubmit(message: string) {
+		addMessage({
+			id: Date.now().toString(),
+			type: 'user_message',
+			message
+		})
+		sendMessage({ userId, message })
+	}
+
 	return (
-		<>
-			<ChatBox userId={userId} addMessage={addMessage} />
+		<div className="w-full">
 			<ChatMessages userId={userId} messages={messages} addMessage={addMessage} />
-		</>
+			<ChatBox placeholder="What is the weather in NYC?" submit={handleSubmit} />
+		</div>
 	)
 }

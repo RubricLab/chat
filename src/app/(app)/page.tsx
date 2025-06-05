@@ -14,7 +14,9 @@ const AgentRow = ({
 		</td>
 		<td className="px-8 py-2">{description}</td>
 		<td className="px-8 py-2">
-			<a href={source}>Source Code</a>
+			<a target="_blank" rel="noreferrer" href={source}>
+				Source Code
+			</a>
 		</td>
 	</tr>
 )
@@ -35,7 +37,9 @@ export default function () {
 					description={
 						<>
 							Agent with progress tracking using{' '}
-							<a href="https://github.com/rubriclab/actions">@rubriclab/events</a>
+							<a target="_blank" rel="noreferrer" href="https://github.com/rubriclab/actions">
+								@rubriclab/events
+							</a>
 						</>
 					}
 					source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/weather-agent"
@@ -48,14 +52,29 @@ export default function () {
 				/>
 				<AgentRow
 					href="/db-agent"
-					name="Db Agent"
+					name="DB Agent"
 					description={
 						<>
 							Database interaction agent. Uses{' '}
-							<a href="https://github.com/rubriclab/actions">@rubriclab/actions</a>
+							<a target="_blank" rel="noreferrer" href="https://github.com/rubriclab/actions">
+								@rubriclab/actions
+							</a>
 						</>
 					}
 					source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/db-agent"
+				/>
+				<AgentRow
+					href="/calculator-agent"
+					name="Calculator Agent"
+					description={
+						<>
+							Recursive Calculator agent that uses{' '}
+							<a target="_blank" rel="noreferrer" href="https://github.com/rubriclab/chains">
+								@rubriclab/chains
+							</a>
+						</>
+					}
+					source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/calculator-agent"
 				/>
 			</tbody>
 		</table>

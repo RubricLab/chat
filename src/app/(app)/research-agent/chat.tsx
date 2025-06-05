@@ -1,10 +1,12 @@
 'use client'
 
-import { type ChangeEvent, useState } from 'react'
+import { useState } from 'react'
 import { useSession } from '~/auth/client'
+import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
 import type { ResearchAgentResponseEvent, ResearchAgentToolEvent } from '~/research-agent/agent'
 import { sendMessage } from '~/research-agent/ai'
 import { useEvents } from '~/research-agent/events/client'
+import { ChatBox } from '../../../lib/components/chatBox'
 
 type Message =
 	| ResearchAgentToolEvent
@@ -15,66 +17,74 @@ type Message =
 			message: string
 	  }
 
-function ChatBox({
-	userId,
-	addMessage
-}: { userId: string; addMessage: (message: Message) => void }) {
-	const [message, setMessage] = useState('What is the price of Bitcoin?')
-
-	function handleInput({ target: { value } }: ChangeEvent<HTMLInputElement>) {
-		setMessage(value)
-	}
-
-	function handleSubmit() {
-		addMessage({
-			id: Date.now().toString(),
-			type: 'user_message',
-			message
-		})
-		sendMessage({ userId, message })
-		setMessage('')
-	}
-
-	return (
-		<div>
-			<input type="text" value={message} onChange={handleInput} />
-			<button type="button" onClick={handleSubmit}>
-				Send Message
-			</button>
-		</div>
-	)
-}
 function MessageSwitch({ message }: { message: Message }) {
 	switch (message.type) {
 		case 'user_message': {
-			return <div>User: {message.message}</div>
+			return <UserMessage>{message.message}</UserMessage>
 		}
 
 		case 'assistant_message': {
 			return (
-				<div>
-					Assistant: {message.message.answer}
-					{message.message.sources.map(source => (
-						<div key={source.url}>
-							<a href={source.url}>{source.title}</a>
-						</div>
-					))}
-				</div>
+				<AssistantMessage>
+					<div>
+						{message.message.answer}
+						{message.message.sources.length > 0 && (
+							<div className="mt-3 border-gray-300 border-t pt-3">
+								<div className="mb-2 font-medium text-gray-600 text-sm">Sources:</div>
+								{message.message.sources.map(source => (
+									<div key={source.url} className="mb-1">
+										<a
+											href={source.url}
+											className="text-blue-600 text-sm underline hover:text-blue-800"
+											target="_blank"
+											rel="noopener noreferrer"
+										>
+											{source.title}
+										</a>
+									</div>
+								))}
+							</div>
+						)}
+					</div>
+				</AssistantMessage>
 			)
 		}
 
 		case 'function_call': {
 			switch (message.name) {
-				case 'research': {
+				case 'search': {
 					const {
 						arguments: { query },
 						result
 					} = message
 					return (
-						<div>
-							<p>Researching {query}...</p>
-							<p>Found {result.length} results</p>
-						</div>
+						<ToolMessage
+							name="research"
+							args={
+								<>
+									Searching for: <strong>{query}</strong>
+								</>
+							}
+							result={
+								<>
+									Found <strong>{result.length}</strong> results
+								</>
+							}
+						/>
+					)
+				}
+
+				case 'getContents': {
+					const {
+						arguments: { url },
+						result
+					} = message
+					return (
+						<ToolMessage
+							name="research"
+							args={<>Retrieving contents of {url}</>}
+							result={<>Found {result.length} website</>}
+						/>
 					)
 				}
 			}
@@ -94,17 +104,14 @@ function ChatMessages({
 	useEvents({
 		id: userId,
 		on: {
-			research: d =>
-				console.log(
-					d.arguments.query,
-					d.result.map(r => r.title)
-				),
-			assistant_message: ({ message }) => console.log(message.answer)
+			search: addMessage,
+			getContents: addMessage,
+			assistant_message: addMessage
 		}
 	})
 
 	return (
-		<div>
+		<div className="pb-16">
 			{messages.map(message => (
 				<MessageSwitch key={message.id} message={message} />
 			))}
@@ -120,10 +127,19 @@ export function Chat() {
 		setMessages(prev => [...prev, message])
 	}
 
+	function handleSubmit(message: string) {
+		addMessage({
+			id: Date.now().toString(),
+			type: 'user_message',
+			message
+		})
+		sendMessage({ userId, message })
+	}
+
 	return (
-		<>
-			<ChatBox userId={userId} addMessage={addMessage} />
+		<div className="w-full">
 			<ChatMessages userId={userId} messages={messages} addMessage={addMessage} />
-		</>
+			<ChatBox placeholder="What is the price of Bitcoin?" submit={handleSubmit} />
+		</div>
 	)
 }
