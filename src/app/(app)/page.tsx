@@ -24,7 +24,7 @@ const AgentRow = ({
 export default function () {
 	return (
 		<div className="flex flex-col items-center gap-4">
-			<h1>Demos</h1>
+			<h1 className="mb-4 font-bold text-2xl">Demos</h1>
 			<table>
 				<tbody>
 					<AgentRow
@@ -83,7 +83,7 @@ export default function () {
 						name="Website Agent"
 						description={
 							<>
-								Website builder using{' '}
+								Static website builder using{' '}
 								<a target="_blank" rel="noreferrer" href="https://github.com/rubriclab/chains">
 									@rubriclab/blocks
 								</a>{' '}

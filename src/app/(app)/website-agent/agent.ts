@@ -1,5 +1,5 @@
 import { createAgent } from '@rubriclab/agents'
-import { createResponseFormat } from '@rubriclab/agents/lib/responseFormat'
+import { createResponseFormat } from '@rubriclab/agents'
 import { createBlocksDocs } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import { blocks } from '~/website-agent/blocks'

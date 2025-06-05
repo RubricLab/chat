@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { useSession } from '~/auth/client'
+import { ChatBox } from '~/components/chatBox'
 import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
 import type { DbAgentResponseEvent, DbAgentToolEvent } from '~/db-agent/agent'
 import { sendMessage } from '~/db-agent/ai'
 import { useEvents } from '~/db-agent/events/client'
-import { ChatBox } from '../../../lib/components/chatBox'
 
 type Message =
 	| DbAgentToolEvent
@@ -60,6 +60,9 @@ function ChatMessages({
 	useEvents({
 		id: userId,
 		on: {
+			ping: payload => {
+				console.log('ping', payload)
+			},
 			getUsers: addMessage,
 			assistant_message: addMessage
 		}

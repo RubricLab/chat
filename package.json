@@ -19,6 +19,7 @@
 		"exa-js": "^1.8.2",
 		"next": "^15.3.2",
 		"postcss": "^8.5.4",
+		"resend": "^4.5.2",
 		"tailwindcss": "^4.1.8",
 		"zod": "latest"
 	},
