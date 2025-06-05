@@ -1,0 +1,17 @@
+import { createAgent, createTool } from '@rubriclab/agents'
+import { z } from 'zod/v4'
+
+export const { executeAgent: executeAdditionAgent, __ResponseEvent } = createAgent({
+	systemPrompt: 'You are an addition agent. Use tools to add two numbers.',
+	tools: {
+		add: createTool({
+			schema: {
+				input: { a: z.number(), b: z.number() },
+				output: z.number()
+			},
+			execute: async ({ a, b }) => a + b
+		})
+	}
+})
+
+export type AdditionAgentResponseEvent = typeof __ResponseEvent

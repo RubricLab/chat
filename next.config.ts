@@ -7,7 +7,8 @@ export default {
 		'@rubriclab/actions',
 		'@rubriclab/blocks',
 		'@rubriclab/agents',
-		'@rubriclab/events'
+		'@rubriclab/events',
+		'@rubriclab/chains'
 	],
 	reactStrictMode: true
 } satisfies NextConfig

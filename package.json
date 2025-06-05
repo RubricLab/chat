@@ -1,22 +1,38 @@
 {
 	"name": "chat",
+	"version": "0.0.0",
 	"module": "index.ts",
 	"type": "module",
 	"private": true,
 	"devDependencies": {
-		"@rubriclab/config": "^0.0.15",
-		"@types/bun": "latest"
+		"@rubriclab/config": "*",
+		"@types/bun": "latest",
+		"@types/react": "latest",
+		"typescript": "latest"
 	},
 	"dependencies": {
-		"@neondatabase/serverless": "^1.0.0",
-		"@prisma/client": "^6.5.0",
+		"@neondatabase/serverless": "latest",
+		"@prisma/client": "latest",
+		"@rubriclab/actions": "*",
+		"@rubriclab/auth": "*",
+		"@rubriclab/agents": "*",
+		"@rubriclab/blocks": "*",
+		"@rubriclab/chains": "*",
+		"@rubriclab/events": "*",
 		"@t3-oss/env-nextjs": "latest",
-		"drizzle-kit": "^0.30.6",
-		"drizzle-orm": "^0.41.0",
-		"next": "15.2.3",
-		"zod": "3.24.2"
+		"@tailwindcss/postcss": "latest",
+		"drizzle-kit": "latest",
+		"drizzle-orm": "latest",
+		"exa-js": "latest",
+		"next": "latest",
+		"postcss": "latest",
+		"resend": "latest",
+		"tailwindcss": "latest",
+		"zod": "latest"
 	},
-	"peerDependencies": {
-		"typescript": "^5"
+	"scripts": {
+		"build": "next build",
+		"dev": "next dev",
+		"db:push": "drizzle-kit push"
 	}
 }

@@ -1,7 +1,9 @@
-import { ClientAuthProvider } from '@rubriclab/auth'
-import { EventsProvider } from '~/events'
-import { CreateLayout } from '~/ui'
+import './globals.css'
 
-export default CreateLayout({
-	providers: [ClientAuthProvider, EventsProvider]
-})
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+	return (
+		<html lang="en">
+			<body>{children}</body>
+		</html>
+	)
+}
