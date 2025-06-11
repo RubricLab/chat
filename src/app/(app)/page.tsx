@@ -31,7 +31,7 @@ export default function () {
 						href="/addition-agent"
 						name="Addition Agent"
 						description="Simple tool-using agent demo"
-						source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/addition-agent"
+						source="https://github.com/rubriclab/chat/tree/main/src/app/(app)/addition-agent"
 					/>
 					<AgentRow
 						href="/weather-agent"
@@ -44,13 +44,13 @@ export default function () {
 								</a>
 							</>
 						}
-						source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/weather-agent"
+						source="https://github.com/rubriclab/chat/tree/main/src/app/(app)/weather-agent"
 					/>
 					<AgentRow
 						href="/research-agent"
 						name="Research Agent"
 						description="Agent with tools and custom response format"
-						source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/research-agent"
+						source="https://github.com/rubriclab/chat/tree/main/src/app/(app)/research-agent"
 					/>
 					<AgentRow
 						href="/db-agent"
@@ -63,7 +63,7 @@ export default function () {
 								</a>
 							</>
 						}
-						source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/db-agent"
+						source="https://github.com/rubriclab/chat/tree/main/src/app/(app)/db-agent"
 					/>
 					<AgentRow
 						href="/calculator-agent"
@@ -76,7 +76,7 @@ export default function () {
 								</a>
 							</>
 						}
-						source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/calculator-agent"
+						source="https://github.com/rubriclab/chat/tree/main/src/app/(app)/calculator-agent"
 					/>
 					<AgentRow
 						href="/website-agent"
@@ -93,13 +93,13 @@ export default function () {
 								</a>
 							</>
 						}
-						source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/website-agent"
+						source="https://github.com/rubriclab/chat/tree/main/src/app/(app)/website-agent"
 					/>
 					<AgentRow
 						href="/form-agent"
 						name="Form Agent [WIP]"
 						description={<>Form builder with generic blocks and dynamic structured chains</>}
-						source="https://github.com/rubriclab/agents/tree/main/src/app/(app)/form-agent"
+						source="https://github.com/rubriclab/chat/tree/main/src/app/(app)/form-agent"
 					/>
 				</tbody>
 			</table>
