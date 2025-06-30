@@ -1,4 +1,5 @@
-import { createChain } from '@rubriclab/chains'
+import { createDrill } from '@rubriclab/chains'
+import { createChain } from '@rubriclab/chains/lib/chains'
 import { z } from 'zod/v4'
 import { blocks } from '~/website-agent/blocks'
 
@@ -6,16 +7,24 @@ const blockSchemas = Object.fromEntries(
 	Object.entries(blocks).map(([key, { schema }]) => [key, schema])
 ) as { [K in keyof typeof blocks]: (typeof blocks)[K]['schema'] }
 
-const { definitions, compatabilities, drill, __Chain } = createChain(blockSchemas, {
+const { definitions, compatibilities } = createChain(blockSchemas, {
 	strict: true,
-	// Because we're using strict mode, but still want to allow the LLM to be able to write strings, numbers, and booleans, we add them as additional compatabilities.
-	additionalCompatabilities: [
-		{ type: z.string(), compatability: z.string() },
-		{ type: z.number(), compatability: z.number() },
-		{ type: z.boolean(), compatability: z.boolean() }
+	additionalCompatibilities: [
+		{
+			type: z.string(),
+			compatibilities: [z.string()]
+		},
+		{
+			type: z.number(),
+			compatibilities: [z.number()]
+		}
 	]
 })
 
-export { definitions, compatabilities, drill }
+export { definitions, compatibilities }
 
-export type Chain = typeof __Chain
+export const chain = z.union(Object.values(definitions))
+
+export type Chain = z.infer<typeof chain>
+
+export const { drill } = createDrill(blockSchemas)

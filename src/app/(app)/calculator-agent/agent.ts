@@ -3,24 +3,20 @@ import { createAgent } from '@rubriclab/agents'
 import { createResponseFormat } from '@rubriclab/agents/lib/responseFormat'
 import { z } from 'zod/v4'
 import { actions } from './actions'
-import { compatabilities, definitions } from './chains'
+import { chain, compatibilities, definitions } from './chains'
 
 const actionsRegistry = z.registry<{ id: string }>()
 
 // Register definitions
-for (const definition of definitions) {
-	definition.register(actionsRegistry, { id: definition.shape.node.value })
-}
+for (const [id, { register }] of Object.entries(definitions)) register(actionsRegistry, { id })
 
 // Register compatabilities
-for (const { shape, schema } of compatabilities) {
-	schema.register(actionsRegistry, { id: JSON.stringify(shape) })
-}
+for (const [id, { register }] of Object.entries(compatibilities)) register(actionsRegistry, { id })
 
 const responseFormat = createResponseFormat({
 	name: 'chain',
 	schema: z.object({
-		chain: z.union(definitions)
+		chain
 	}),
 	// Pass the registry to build the recursive schema.
 	registry: actionsRegistry

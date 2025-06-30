@@ -18,34 +18,40 @@ function getResponseFormat() {
 		Object.entries(blocks).map(([key, { schema }]) => [key, schema])
 	) as { [K in keyof typeof blocks]: (typeof blocks)[K]['schema'] }
 
-	const { definitions, compatabilities } = createChain(
+	const { definitions, compatibilities } = createChain(
 		{ ...actionSchemas, ...blockSchemas },
 		{
 			strict: true,
-			additionalCompatabilities: [
-				{
-					type: z.number(),
-					compatability: z.number()
-				}
+			additionalCompatibilities: [
+				// {
+				// 	type: z.number(),
+				// 	compatibilities: [z.number()]
+				// },
+				// {
+				// 	type: z.string(),
+				// 	compatibilities: [z.literal('STRING')]
+				// },
 			]
 		}
 	)
 
+	const chain = z.union(Object.values(definitions))
+
 	const fullstackRegistry = z.registry<{ id: string }>()
 
 	// Register definitions
-	for (const definition of definitions) {
-		definition.register(fullstackRegistry, { id: definition.shape.node.value })
+	for (const [id, { register }] of Object.entries(definitions)) {
+		register(fullstackRegistry, { id })
 	}
 
 	// Register compatabilities
-	for (const { shape, schema } of compatabilities) {
-		schema.register(fullstackRegistry, { id: JSON.stringify(shape) })
+	for (const [id, { register }] of Object.entries(compatibilities)) {
+		register(fullstackRegistry, { id })
 	}
 	const responseFormat = createResponseFormat({
 		name: 'chain',
 		schema: z.object({
-			chain: z.union(definitions)
+			chain
 		}),
 		// Pass the registry to build the recursive schema.
 		registry: fullstackRegistry

@@ -1,4 +1,4 @@
-import { createBlock, createGenericActionExecutorBlock } from '@rubriclab/blocks'
+import { createBlock, createStatefulBlock, createGenericActionExecutorBlock } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import { actions, user } from '../actions'
 import { GenericForm } from './genericForm'
@@ -8,20 +8,20 @@ import { UserSelect } from './userSelect'
 // const ReactNode = z.literal('ReactNode')
 
 export const blocks = {
-	textInput: createBlock({
+	textInput: createStatefulBlock({
 		schema: {
 			input: {},
 			output: z.string()
 		},
-		render: (_, { emit }) => <TextInput emit={emit} />,
+		render: (_) => ({ state: '', react: <TextInput emit={() => ""} /> }),
 		description: 'Render a text input'
 	}),
-	userSelect: createBlock({
+	userSelect: createStatefulBlock({
 		schema: {
 			input: { users: z.array(user) },
 			output: user
 		},
-		render: ({ users }, { emit }) => <UserSelect users={users} emit={emit} />,
+		render: ({ users }) => ({ state: {id: '', email: ''}, react: <UserSelect users={users} emit={(() => '')} /> }),
 		description: 'Render a user select'
 	})
 }
@@ -35,7 +35,6 @@ export const genericBlocks = {
 			return createBlock({
 				schema: {
 					input: action.schema.input,
-					output: z.undefined()
 				},
 				// biome-ignore lint/suspicious/noExplicitAny: We should fix this
 				render: input => <GenericForm fields={input} onSubmit={action.execute as any} />,

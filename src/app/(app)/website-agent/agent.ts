@@ -3,27 +3,23 @@ import { createResponseFormat } from '@rubriclab/agents'
 import { createBlocksDocs } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import { blocks } from '~/website-agent/blocks'
-import { compatabilities, definitions } from '~/website-agent/chains'
+import { chain, compatibilities, definitions } from '~/website-agent/chains'
 
-const actionsRegistry = z.registry<{ id: string }>()
+const registry = z.registry<{ id: string }>()
 
 // Register definitions
-for (const definition of definitions) {
-	definition.register(actionsRegistry, { id: definition.shape.node.value })
-}
+for (const [id, { register }] of Object.entries(definitions)) register(registry, { id })
 
 // Register compatabilities
-for (const { shape, schema } of compatabilities) {
-	schema.register(actionsRegistry, { id: JSON.stringify(shape) })
-}
+for (const [id, { register }] of Object.entries(compatibilities)) register(registry, { id })
 
 const responseFormat = createResponseFormat({
 	name: 'chain',
 	schema: z.object({
-		chain: z.union(definitions)
+		chain
 	}),
 	// Pass the registry to build the recursive schema.
-	registry: actionsRegistry
+	registry
 })
 
 const systemPrompt = `You are a state of the art website building agent.
@@ -46,7 +42,7 @@ When you are ready to generate the fullstack payload, output your final answer.
 
 Thank you for your help, let's get started!`
 
-// console.dir(responseFormat, { depth: null })
+console.dir(responseFormat, { depth: null })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
 	systemPrompt,
