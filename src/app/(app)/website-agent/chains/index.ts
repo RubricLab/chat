@@ -8,17 +8,17 @@ const blockSchemas = Object.fromEntries(
 ) as { [K in keyof typeof blocks]: (typeof blocks)[K]['schema'] }
 
 const { definitions, compatibilities } = createChain(blockSchemas, {
-	strict: true,
 	additionalCompatibilities: [
 		{
-			type: z.string(),
-			compatibilities: [z.string()]
+			compatibilities: [z.string()],
+			type: z.string()
 		},
 		{
-			type: z.number(),
-			compatibilities: [z.number()]
+			compatibilities: [z.number()],
+			type: z.number()
 		}
-	]
+	],
+	strict: true
 })
 
 export { definitions, compatibilities }

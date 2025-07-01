@@ -19,12 +19,12 @@ export async function search({ query, numResults }: { query: string; numResults:
 }
 
 export async function getContents({ url }: { url: string }) {
-	const { results } = await exa.getContents(url, { text: true, livecrawl: 'auto' })
+	const { results } = await exa.getContents(url, { livecrawl: 'auto', text: true })
 
 	if (!results[0]) {
 		return {
-			title: 'No results found',
 			content: 'No results found',
+			title: 'No results found',
 			url
 		}
 	}
@@ -32,8 +32,8 @@ export async function getContents({ url }: { url: string }) {
 	const { title, text } = results[0]
 
 	return {
-		title,
 		content: text,
+		title,
 		url
 	}
 }

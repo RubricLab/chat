@@ -21,7 +21,6 @@ function getResponseFormat() {
 	const { definitions, compatibilities } = createChain(
 		{ ...actionSchemas, ...blockSchemas },
 		{
-			strict: true,
 			additionalCompatibilities: [
 				// {
 				// 	type: z.number(),
@@ -31,7 +30,8 @@ function getResponseFormat() {
 				// 	type: z.string(),
 				// 	compatibilities: [z.literal('STRING')]
 				// },
-			]
+			],
+			strict: true
 		}
 	)
 
@@ -50,11 +50,11 @@ function getResponseFormat() {
 	}
 	const responseFormat = createResponseFormat({
 		name: 'chain',
+		// Pass the registry to build the recursive schema.
+		registry: fullstackRegistry,
 		schema: z.object({
 			chain
-		}),
-		// Pass the registry to build the recursive schema.
-		registry: fullstackRegistry
+		})
 	})
 	// console.dir(responseFormat, { depth: null })
 	return responseFormat
@@ -97,7 +97,6 @@ When you are ready to generate the fullstack payload, output your final answer.
 Thank you for your help, let's get started!`
 
 const instantiateFormTool = createTool({
-	schema: genericBlocks.instantiateForm.schema,
 	execute: async input => {
 		blocks = {
 			...blocks,
@@ -106,13 +105,14 @@ const instantiateFormTool = createTool({
 			}
 		}
 		return undefined
-	}
+	},
+	schema: genericBlocks.instantiateForm.schema
 })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
+	responseFormat: getResponseFormat,
 	systemPrompt,
-	tools: { instantiateForm: instantiateFormTool },
-	responseFormat: getResponseFormat
+	tools: { instantiateForm: instantiateFormTool }
 })
 
 export { eventTypes as formAgentEventTypes }

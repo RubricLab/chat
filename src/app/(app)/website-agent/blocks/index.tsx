@@ -15,83 +15,81 @@ import { Section } from './section'
 import { Stack } from './stack'
 
 export const blocks = {
-	// Content blocks
-	heading: createBlock({
-		schema: {
-			input: {
-				text: z.string(),
-				level: z.number()
-			},
-		},
-		render: ({ text, level }) => <Heading text={text} level={level} />,
-		description: 'Render a heading'
-	}),
-	paragraph: createBlock({
-		schema: { input: { text: z.string() },  },
-		render: ({ text }) => <Paragraph text={text} />,
-		description: 'Render a paragraph'
+	card: createBlock({
+		description: 'Card container',
+		render: ({ children }) => <Card>{children}</Card>,
+		schema: { input: { children: z.array(REACT_NODE) } }
 	}),
 	code: createBlock({
-		schema: { input: { code: z.string() },  },
+		description: 'Render code block',
 		render: ({ code }) => <Code code={code} />,
-		description: 'Render code block'
-	}),
-	quote: createBlock({
-		schema: { input: { text: z.string() },  },
-		render: ({ text }) => <Quote text={text} />,
-		description: 'Render a quote'
-	}),
-	image: createBlock({
-		schema: { input: { src: z.string(), alt: z.string() },  },
-		render: ({ src, alt }) => <Image src={src} alt={alt} />,
-		description: 'Render an image'
-	}),
-	link: createBlock({
-		schema: { input: { href: z.string(), text: z.string() }, },
-		render: ({ href, text }) => <Link href={href} text={text} />,
-		description: 'Render a link'
+		schema: { input: { code: z.string() } }
 	}),
 
 	// Layout blocks
 	container: createBlock({
-		schema: {
-			input: { children: z.array(REACT_NODE), maxWidth: z.number() },
-			
-		},
+		description: 'Container with max width',
 		render: ({ children, maxWidth }) => <Container maxWidth={maxWidth}>{children}</Container>,
-		description: 'Container with max width'
-	}),
-	stack: createBlock({
 		schema: {
-			input: { children: z.array(REACT_NODE), spacing: z.number() },
-			
-		},
-		render: ({ children, spacing }) => <Stack spacing={spacing}>{children}</Stack>,
-		description: 'Stack children vertically'
-	}),
-	grid: createBlock({
-		schema: { input: { children: z.array(REACT_NODE), columns: z.number() }, },
-		render: ({ children, columns }) => <Grid columns={columns}>{children}</Grid>,
-		description: 'Grid layout'
-	}),
-	section: createBlock({
-		schema: { input: { children: z.array(REACT_NODE) },  },
-		render: ({ children }) => <Section>{children}</Section>,
-		description: 'Semantic section'
+			input: { children: z.array(REACT_NODE), maxWidth: z.number() }
+		}
 	}),
 	footer: createBlock({
-		schema: { input: { children: z.array(REACT_NODE) },  },
+		description: 'Semantic footer',
 		render: ({ children }) => <Footer>{children}</Footer>,
-		description: 'Semantic footer'
+		schema: { input: { children: z.array(REACT_NODE) } }
 	}),
-	card: createBlock({
-		schema: { input: { children: z.array(REACT_NODE) }, },
-		render: ({ children }) => <Card>{children}</Card>,
-		description: 'Card container'
+	grid: createBlock({
+		description: 'Grid layout',
+		render: ({ children, columns }) => <Grid columns={columns}>{children}</Grid>,
+		schema: { input: { children: z.array(REACT_NODE), columns: z.number() } }
+	}),
+	// Content blocks
+	heading: createBlock({
+		description: 'Render a heading',
+		render: ({ text, level }) => <Heading text={text} level={level} />,
+		schema: {
+			input: {
+				level: z.number(),
+				text: z.string()
+			}
+		}
 	}),
 	hero: createBlock({
-		schema: { input: { children: z.array(REACT_NODE) },  },
+		description: 'Hero section',
 		render: ({ children }) => <Hero>{children}</Hero>,
-		description: 'Hero section'
+		schema: { input: { children: z.array(REACT_NODE) } }
 	}),
+	image: createBlock({
+		description: 'Render an image',
+		render: ({ src, alt }) => <Image src={src} alt={alt} />,
+		schema: { input: { alt: z.string(), src: z.string() } }
+	}),
+	link: createBlock({
+		description: 'Render a link',
+		render: ({ href, text }) => <Link href={href} text={text} />,
+		schema: { input: { href: z.string(), text: z.string() } }
+	}),
+	paragraph: createBlock({
+		description: 'Render a paragraph',
+		render: ({ text }) => <Paragraph text={text} />,
+		schema: { input: { text: z.string() } }
+	}),
+	quote: createBlock({
+		description: 'Render a quote',
+		render: ({ text }) => <Quote text={text} />,
+		schema: { input: { text: z.string() } }
+	}),
+	section: createBlock({
+		description: 'Semantic section',
+		render: ({ children }) => <Section>{children}</Section>,
+		schema: { input: { children: z.array(REACT_NODE) } }
+	}),
+	stack: createBlock({
+		description: 'Stack children vertically',
+		render: ({ children, spacing }) => <Stack spacing={spacing}>{children}</Stack>,
+		schema: {
+			input: { children: z.array(REACT_NODE), spacing: z.number() }
+		}
+	})
 }

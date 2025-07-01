@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next'
 
 export default {
+	reactStrictMode: true,
 	transpilePackages: [
 		'@rubriclab/auth',
 		'@rubriclab/webhooks',
@@ -9,6 +10,5 @@ export default {
 		'@rubriclab/agents',
 		'@rubriclab/events',
 		'@rubriclab/chains'
-	],
-	reactStrictMode: true
+	]
 } satisfies NextConfig

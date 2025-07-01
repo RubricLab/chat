@@ -1,5 +1,4 @@
-import { createAgent } from '@rubriclab/agents'
-import { createResponseFormat } from '@rubriclab/agents'
+import { createAgent, createResponseFormat } from '@rubriclab/agents'
 import { createBlocksDocs } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import { blocks } from '~/website-agent/blocks'
@@ -15,11 +14,11 @@ for (const [id, { register }] of Object.entries(compatibilities)) register(regis
 
 const responseFormat = createResponseFormat({
 	name: 'chain',
+	// Pass the registry to build the recursive schema.
+	registry,
 	schema: z.object({
 		chain
-	}),
-	// Pass the registry to build the recursive schema.
-	registry
+	})
 })
 
 const systemPrompt = `You are a state of the art website building agent.
@@ -45,9 +44,9 @@ Thank you for your help, let's get started!`
 console.dir(responseFormat, { depth: null })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
+	responseFormat,
 	systemPrompt,
-	tools: {},
-	responseFormat
+	tools: {}
 })
 
 export { eventTypes as websiteAgentEventTypes }

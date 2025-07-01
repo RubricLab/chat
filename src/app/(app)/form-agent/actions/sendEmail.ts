@@ -18,9 +18,9 @@ export async function sendEmail({
 }) {
 	const { error } = await resend.emails.send({
 		from: 'Rubric Chat <chat@mail.rubric.sh>',
-		to: [to.email],
 		subject,
-		text: body
+		text: body,
+		to: [to.email]
 	})
 
 	if (error) {

@@ -117,9 +117,9 @@ function ChatMessages({
 	useEvents({
 		id: userId,
 		on: {
-			search: addMessage,
+			assistant_message: addMessage,
 			getContents: addMessage,
-			assistant_message: addMessage
+			search: addMessage
 		}
 	})
 
@@ -143,10 +143,10 @@ export function Chat() {
 	function handleSubmit(message: string) {
 		addMessage({
 			id: Date.now().toString(),
-			type: 'user_message',
-			message
+			message,
+			type: 'user_message'
 		})
-		sendMessage({ userId, message })
+		sendMessage({ message, userId })
 	}
 
 	return (

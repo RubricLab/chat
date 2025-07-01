@@ -7,7 +7,12 @@ const AgentRow = ({
 	name,
 	description,
 	source
-}: { href: string; name: string; description: ReactNode; source: string }) => (
+}: {
+	href: string
+	name: string
+	description: ReactNode
+	source: string
+}) => (
 	<tr className="border-gray-200 border-b dark:border-neutral-800">
 		<td className="px-8 py-2">
 			<a href={href}>{name}</a>

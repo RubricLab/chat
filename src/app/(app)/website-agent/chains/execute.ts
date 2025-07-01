@@ -1,6 +1,6 @@
+import type { ReactNode } from 'react'
 import { render } from '~/website-agent/blocks/client'
 import { type Chain, drill } from './index'
-import { ReactNode } from 'react'
 
 export async function executeChain(chain: Chain) {
 	return drill(

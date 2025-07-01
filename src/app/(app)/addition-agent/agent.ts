@@ -5,11 +5,11 @@ export const { executeAgent: executeAdditionAgent, __ResponseEvent } = createAge
 	systemPrompt: 'You are an addition agent. Use tools to add two numbers.',
 	tools: {
 		add: createTool({
+			execute: async ({ a, b }) => a + b,
 			schema: {
 				input: { a: z.number(), b: z.number() },
 				output: z.number()
-			},
-			execute: async ({ a, b }) => a + b
+			}
 		})
 	}
 })

@@ -15,5 +15,5 @@ export function useStateful<T extends z.ZodTypeAny, S = z.infer<T>>(
 
 	const element = useMemo(() => <Component state={state} setState={setState} />, [Component, state])
 
-	return { state, element }
+	return { element, state }
 }

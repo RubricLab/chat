@@ -3,4 +3,4 @@ export async function modulo({ dividend, divisor }: { dividend: number; divisor:
 		throw new Error('Modulo by zero is not allowed')
 	}
 	return dividend % divisor
-} 
+}

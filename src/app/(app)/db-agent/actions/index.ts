@@ -4,11 +4,11 @@ import { getUsers } from './getUsers'
 
 export const actions = {
 	getUsers: createAction({
+		description: 'Get all users',
+		execute: getUsers,
 		schema: {
 			input: { limit: z.number() },
-			output: z.array(z.object({ id: z.string(), name: z.string().nullable(), email: z.string() }))
-		},
-		execute: getUsers,
-		description: 'Get all users'
+			output: z.array(z.object({ email: z.string(), id: z.string(), name: z.string().nullable() }))
+		}
 	})
 }

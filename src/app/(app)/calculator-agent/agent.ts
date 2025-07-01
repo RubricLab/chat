@@ -15,11 +15,11 @@ for (const [id, { register }] of Object.entries(compatibilities)) register(actio
 
 const responseFormat = createResponseFormat({
 	name: 'chain',
+	// Pass the registry to build the recursive schema.
+	registry: actionsRegistry,
 	schema: z.object({
 		chain
-	}),
-	// Pass the registry to build the recursive schema.
-	registry: actionsRegistry
+	})
 })
 
 const systemPrompt = `You are a state of the art calculator agent.
@@ -46,9 +46,9 @@ Thank you for your help, let's get started!`
 // console.dir(responseFormat, { depth: null })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
+	responseFormat,
 	systemPrompt,
-	tools: {},
-	responseFormat
+	tools: {}
 })
 
 export { eventTypes as calculatorAgentEventTypes }

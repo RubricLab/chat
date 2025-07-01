@@ -5,11 +5,11 @@ import env from '~/env'
 
 export async function sendMessage({ message }: { message: string }) {
 	const { answer } = await executeAdditionAgent({
-		messages: [{ role: 'user', content: message }],
-		openAIKey: env.OPENAI_API_KEY,
+		messages: [{ content: message, role: 'user' }],
 		onEvent: async _events => {
 			// console.log(events)
-		}
+		},
+		openAIKey: env.OPENAI_API_KEY
 	})
 	return answer
 }

@@ -4,7 +4,7 @@ import { signIn } from '~/auth/actions'
 
 export function SignInButton() {
 	return (
-		<button type="button" onClick={async () => signIn({ provider: 'github', callbackUrl: '/' })}>
+		<button type="button" onClick={async () => signIn({ callbackUrl: '/', provider: 'github' })}>
 			Sign In With Github
 		</button>
 	)

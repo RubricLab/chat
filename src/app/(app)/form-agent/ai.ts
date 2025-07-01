@@ -6,7 +6,7 @@ import { publish } from '~/form-agent/events/server'
 
 export async function sendMessage({ userId, message }: { userId: string; message: string }) {
 	const { chain } = await executeFormAgent({
-		messages: [{ role: 'user', content: message }],
+		messages: [{ content: message, role: 'user' }],
 		onEvent: async events => {
 			switch (events.type) {
 				case 'function_call': {

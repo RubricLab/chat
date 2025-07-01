@@ -3,4 +3,4 @@ export async function divide({ dividend, divisor }: { dividend: number; divisor:
 		throw new Error('Division by zero is not allowed')
 	}
 	return dividend / divisor
-} 
+}

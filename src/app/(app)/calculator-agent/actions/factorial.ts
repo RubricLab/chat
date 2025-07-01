@@ -8,4 +8,4 @@ export async function factorial(n: number) {
 		result *= i
 	}
 	return result
-} 
+}

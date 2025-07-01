@@ -6,7 +6,7 @@ import env from '~/env'
 
 export async function sendMessage({ userId, message }: { userId: string; message: string }) {
 	const { answer } = await executeDbAgent({
-		messages: [{ role: 'user', content: message }],
+		messages: [{ content: message, role: 'user' }],
 		onEvent: async events => {
 			switch (events.type) {
 				case 'function_call':

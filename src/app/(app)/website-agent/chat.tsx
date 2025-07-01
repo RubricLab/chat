@@ -88,10 +88,10 @@ export function Chat() {
 	function handleSubmit(message: string) {
 		addMessage({
 			id: Date.now().toString(),
-			type: 'user_message',
-			message
+			message,
+			type: 'user_message'
 		})
-		sendMessage({ userId, message })
+		sendMessage({ message, userId })
 	}
 
 	return (

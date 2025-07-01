@@ -46,14 +46,14 @@ export function Chat() {
 	async function handleSubmit(message: string) {
 		addMessage({
 			id: Date.now().toString(),
-			type: 'user_message',
-			message
+			message,
+			type: 'user_message'
 		})
 		const answer = await sendMessage({ message })
 		addMessage({
 			id: Date.now().toString(),
-			type: 'assistant_message',
-			message: { answer }
+			message: { answer },
+			type: 'assistant_message'
 		})
 	}
 

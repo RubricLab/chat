@@ -1,21 +1,10 @@
 {
-	"name": "chat",
-	"version": "0.0.0",
-	"module": "index.ts",
-	"type": "module",
-	"private": true,
-	"devDependencies": {
-		"@rubriclab/config": "*",
-		"@types/bun": "latest",
-		"@types/react": "latest",
-		"typescript": "latest"
-	},
 	"dependencies": {
 		"@neondatabase/serverless": "latest",
 		"@prisma/client": "latest",
 		"@rubriclab/actions": "*",
-		"@rubriclab/auth": "*",
 		"@rubriclab/agents": "*",
+		"@rubriclab/auth": "*",
 		"@rubriclab/blocks": "*",
 		"@rubriclab/chains": "*",
 		"@rubriclab/events": "*",
@@ -30,10 +19,21 @@
 		"tailwindcss": "latest",
 		"zod": "latest"
 	},
+	"devDependencies": {
+		"@rubriclab/config": "*",
+		"@types/bun": "latest",
+		"@types/react": "latest",
+		"typescript": "latest"
+	},
+	"module": "index.ts",
+	"name": "chat",
+	"private": true,
 	"scripts": {
 		"build": "next build",
-		"dev": "next dev",
 		"db:push": "drizzle-kit push",
+		"dev": "next dev",
 		"format": "bun x biome check . --write"
-	}
+	},
+	"type": "module",
+	"version": "0.0.0"
 }

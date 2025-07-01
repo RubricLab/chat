@@ -2,6 +2,6 @@ import { createEventsClient } from '@rubriclab/events/client'
 import { eventTypes } from './types'
 
 export const { useEvents } = createEventsClient({
-	url: '/form-agent/events',
-	eventTypes
+	eventTypes,
+	url: '/form-agent/events'
 })

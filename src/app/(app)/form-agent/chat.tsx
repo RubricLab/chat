@@ -61,8 +61,8 @@ function ChatMessages({
 	useEvents({
 		id: userId,
 		on: {
-			instantiateForm: addMessage,
-			assistant_message: addMessage
+			assistant_message: addMessage,
+			instantiateForm: addMessage
 		}
 	})
 
@@ -86,10 +86,10 @@ export function Chat() {
 	function handleSubmit(message: string) {
 		addMessage({
 			id: Date.now().toString(),
-			type: 'user_message',
-			message
+			message,
+			type: 'user_message'
 		})
-		sendMessage({ userId, message })
+		sendMessage({ message, userId })
 	}
 
 	return (

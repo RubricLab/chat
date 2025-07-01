@@ -3,4 +3,4 @@ export async function sqrt(value: number) {
 		throw new Error('Square root of negative number is not allowed')
 	}
 	return Math.sqrt(value)
-} 
+}

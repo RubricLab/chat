@@ -6,7 +6,7 @@ import { publish } from '~/website-agent/events/server'
 
 export async function sendMessage({ userId, message }: { userId: string; message: string }) {
 	const { chain } = await executeWebsiteAgent({
-		messages: [{ role: 'user', content: message }],
+		messages: [{ content: message, role: 'user' }],
 		onEvent: async events => {
 			switch (events.type) {
 				case 'assistant_message':

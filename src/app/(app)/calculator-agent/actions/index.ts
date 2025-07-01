@@ -26,197 +26,197 @@ import { sum } from './sum'
 import { tan } from './tan'
 
 export const actions = {
-	sum: createAction({
+	abs: createAction({
+		description: 'Calculate absolute value',
+		execute: abs,
 		schema: {
-			input: z.array(z.number()),
+			input: z.number(),
 			output: z.number()
-		},
-		execute: sum,
-		description: 'Sum multiple numbers'
+		}
 	}),
-	subtract: createAction({
+	ceil: createAction({
+		description: 'Round up to the nearest integer',
+		execute: ceil,
 		schema: {
-			input: z.object({ minuend: z.number(), subtrahend: z.number() }),
+			input: z.number(),
 			output: z.number()
-		},
-		execute: subtract,
-		description: 'Subtract a subtrahend from a minuend'
+		}
+	}),
+	cos: createAction({
+		description: 'Calculate cosine (input in radians)',
+		execute: cos,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
+	}),
+	degreesToRadians: createAction({
+		description: 'Convert degrees to radians',
+		execute: degreesToRadians,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
+	}),
+	divide: createAction({
+		description: 'Divide a dividend by a divisor',
+		execute: divide,
+		schema: {
+			input: z.object({ dividend: z.number(), divisor: z.number() }),
+			output: z.number()
+		}
+	}),
+	factorial: createAction({
+		description: 'Calculate factorial (n!)',
+		execute: factorial,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
+	}),
+	floor: createAction({
+		description: 'Round down to the nearest integer',
+		execute: floor,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
+	}),
+	getE: createAction({
+		description: "Get the value of E (Euler's number)",
+		execute: getE,
+		schema: {
+			input: z.null(),
+			output: z.number()
+		}
+	}),
+	getPi: createAction({
+		description: 'Get the value of PI',
+		execute: getPi,
+		schema: {
+			input: z.null(),
+			output: z.number()
+		}
+	}),
+	log: createAction({
+		description: 'Calculate natural logarithm',
+		execute: log,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
+	}),
+	log10: createAction({
+		description: 'Calculate base-10 logarithm',
+		execute: log10,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
+	}),
+	modulo: createAction({
+		description: 'Get remainder when dividing dividend by divisor',
+		execute: modulo,
+		schema: {
+			input: z.object({ dividend: z.number(), divisor: z.number() }),
+			output: z.number()
+		}
 	}),
 	multiply: createAction({
+		description: 'Multiply a multiplicand by a multiplier',
+		execute: multiply,
 		schema: {
 			input: z.object({ multiplicand: z.number(), multiplier: z.number() }),
 			output: z.number()
-		},
-		execute: multiply,
-		description: 'Multiply a multiplicand by a multiplier'
-	}),
-	divide: createAction({
-		schema: {
-			input: z.object({ dividend: z.number(), divisor: z.number() }),
-			output: z.number()
-		},
-		execute: divide,
-		description: 'Divide a dividend by a divisor'
-	}),
-	modulo: createAction({
-		schema: {
-			input: z.object({ dividend: z.number(), divisor: z.number() }),
-			output: z.number()
-		},
-		execute: modulo,
-		description: 'Get remainder when dividing dividend by divisor'
-	}),
-	power: createAction({
-		schema: {
-			input: z.object({ base: z.number(), exponent: z.number() }),
-			output: z.number()
-		},
-		execute: power,
-		description: 'Raise base to the power of exponent'
-	}),
-	sqrt: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: sqrt,
-		description: 'Calculate square root'
-	}),
-	abs: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: abs,
-		description: 'Calculate absolute value'
+		}
 	}),
 	negate: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
+		description: 'Negate a number (change its sign)',
 		execute: negate,
-		description: 'Negate a number (change its sign)'
-	}),
-	round: createAction({
-		schema: {
-			input: z.object({ value: z.number(), decimals: z.union([z.number(), z.null()]) }),
-			output: z.number()
-		},
-		execute: round,
-		description: 'Round to specified decimal places (default: 0)'
-	}),
-	floor: createAction({
 		schema: {
 			input: z.number(),
 			output: z.number()
-		},
-		execute: floor,
-		description: 'Round down to the nearest integer'
-	}),
-	ceil: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: ceil,
-		description: 'Round up to the nearest integer'
-	}),
-	factorial: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: factorial,
-		description: 'Calculate factorial (n!)'
-	}),
-	sin: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: sin,
-		description: 'Calculate sine (input in radians)'
-	}),
-	cos: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: cos,
-		description: 'Calculate cosine (input in radians)'
-	}),
-	tan: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: tan,
-		description: 'Calculate tangent (input in radians)'
-	}),
-	log: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: log,
-		description: 'Calculate natural logarithm'
-	}),
-	log10: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: log10,
-		description: 'Calculate base-10 logarithm'
-	}),
-	getPi: createAction({
-		schema: {
-			input: z.null(),
-			output: z.number()
-		},
-		execute: getPi,
-		description: 'Get the value of PI'
-	}),
-	getE: createAction({
-		schema: {
-			input: z.null(),
-			output: z.number()
-		},
-		execute: getE,
-		description: 'Get the value of E (Euler\'s number)'
-	}),
-	degreesToRadians: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: degreesToRadians,
-		description: 'Convert degrees to radians'
-	}),
-	radiansToDegrees: createAction({
-		schema: {
-			input: z.number(),
-			output: z.number()
-		},
-		execute: radiansToDegrees,
-		description: 'Convert radians to degrees'
-	}),
-	stringify: createAction({
-		schema: {
-			input: z.number(),
-			output: z.string()
-		},
-		execute: stringify,
-		description: 'Stringify a number'
+		}
 	}),
 	parse: createAction({
+		description: 'Parse a string to a number',
+		execute: parse,
 		schema: {
 			input: z.string(),
 			output: z.number()
-		},
-		execute: parse,
-		description: 'Parse a string to a number'
+		}
+	}),
+	power: createAction({
+		description: 'Raise base to the power of exponent',
+		execute: power,
+		schema: {
+			input: z.object({ base: z.number(), exponent: z.number() }),
+			output: z.number()
+		}
+	}),
+	radiansToDegrees: createAction({
+		description: 'Convert radians to degrees',
+		execute: radiansToDegrees,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
+	}),
+	round: createAction({
+		description: 'Round to specified decimal places (default: 0)',
+		execute: round,
+		schema: {
+			input: z.object({ decimals: z.union([z.number(), z.null()]), value: z.number() }),
+			output: z.number()
+		}
+	}),
+	sin: createAction({
+		description: 'Calculate sine (input in radians)',
+		execute: sin,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
+	}),
+	sqrt: createAction({
+		description: 'Calculate square root',
+		execute: sqrt,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
+	}),
+	stringify: createAction({
+		description: 'Stringify a number',
+		execute: stringify,
+		schema: {
+			input: z.number(),
+			output: z.string()
+		}
+	}),
+	subtract: createAction({
+		description: 'Subtract a subtrahend from a minuend',
+		execute: subtract,
+		schema: {
+			input: z.object({ minuend: z.number(), subtrahend: z.number() }),
+			output: z.number()
+		}
+	}),
+	sum: createAction({
+		description: 'Sum multiple numbers',
+		execute: sum,
+		schema: {
+			input: z.array(z.number()),
+			output: z.number()
+		}
+	}),
+	tan: createAction({
+		description: 'Calculate tangent (input in radians)',
+		execute: tan,
+		schema: {
+			input: z.number(),
+			output: z.number()
+		}
 	})
 }
 

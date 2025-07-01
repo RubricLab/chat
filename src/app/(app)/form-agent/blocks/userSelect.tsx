@@ -7,7 +7,10 @@ import type { user } from '~/form-agent/actions'
 export function UserSelect({
 	users,
 	emit
-}: { users: z.infer<typeof user>[]; emit: (value: z.infer<typeof user>) => void }) {
+}: {
+	users: z.infer<typeof user>[]
+	emit: (value: z.infer<typeof user>) => void
+}) {
 	const initialValue = users[0]
 	if (!initialValue) {
 		throw new Error('No contacts provided')

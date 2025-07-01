@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { useSession } from '~/auth/client'
 import type {
 	CalculatorAgentResponseEvent,
@@ -11,8 +11,8 @@ import { useEvents } from '~/calculator-agent/events/client'
 import { Code } from '~/components/code'
 import { AssistantMessage, UserMessage } from '~/components/message'
 import { ChatBox } from '../../../lib/components/chatBox'
+import type { Chain } from './chains'
 import { executeChain } from './chains/execute'
-import { Chain } from './chains'
 
 type Message =
 	| CalculatorAgentToolEvent
@@ -85,10 +85,10 @@ export function Chat() {
 	function handleSubmit(message: string) {
 		addMessage({
 			id: Date.now().toString(),
-			type: 'user_message',
-			message
+			message,
+			type: 'user_message'
 		})
-		sendMessage({ userId, message })
+		sendMessage({ message, userId })
 	}
 
 	return (

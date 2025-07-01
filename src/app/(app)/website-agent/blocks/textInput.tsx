@@ -6,7 +6,7 @@ import { useStateful } from './state'
 export function TextInput() {
 	const { state, element } = useStateful(z.string(), 'hello', TextInputComponent)
 
-	return { state, react: element }
+	return { react: element, state }
 }
 
 export function TextInputComponent({

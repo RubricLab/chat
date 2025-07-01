@@ -13,22 +13,22 @@ Step 3: Repeat steps 2 and 3 as you learn more about the topic.
 Feel free to go deeper with each search until you have everything you need and are confident you understand the topic well.
 When satisfied, return the explicit answer as directly and simply as possible. Make sure it is accurate, up to date and fact checked against multiple sources.
 
-Today's date is ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}.`
+Today's date is ${new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}.`
 
 const searchTool = createTool({
+	execute: search,
 	schema: {
-		input: { query: z.string(), numResults: z.number().min(10).max(100) },
+		input: { numResults: z.number().min(10).max(100), query: z.string() },
 		output: z.array(z.object({ title: z.string().nullable(), url: z.string() }))
-	},
-	execute: search
+	}
 })
 
 const getContentsTool = createTool({
+	execute: getContents,
 	schema: {
 		input: { url: z.string() },
-		output: z.object({ title: z.string().nullable(), content: z.string(), url: z.string() })
-	},
-	execute: getContents
+		output: z.object({ content: z.string(), title: z.string().nullable(), url: z.string() })
+	}
 })
 
 const responseFormat = createResponseFormat({
@@ -40,9 +40,9 @@ const responseFormat = createResponseFormat({
 })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
+	responseFormat,
 	systemPrompt,
-	tools: { search: searchTool, getContents: getContentsTool },
-	responseFormat
+	tools: { getContents: getContentsTool, search: searchTool }
 })
 
 export { eventTypes as researchAgentEventTypes }
