@@ -1,3 +1,3 @@
-export async function subtract({ a, b }: { a: number; b: number }) {
-	return a - b
+export async function subtract({ minuend, subtrahend }: { minuend: number; subtrahend: number }) {
+	return minuend - subtrahend
 }

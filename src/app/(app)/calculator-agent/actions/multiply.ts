@@ -1,3 +1,3 @@
-export async function multiply({ a, b }: { a: number; b: number }) {
-	return a * b
+export async function multiply({ multiplicand, multiplier}: { multiplicand: number; multiplier: number }) {
+	return multiplicand * multiplier
 }

@@ -1,3 +1,3 @@
-export async function stringify({ a }: { a: number }) {
-	return a.toString()
+export async function stringify(number: number ) {
+	return number.toString()
 }
