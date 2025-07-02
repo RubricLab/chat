@@ -6,7 +6,7 @@ const systemPrompt = 'You are a weather agent. Use tools to get the weather for 
 const weatherTool = createTool({
 	execute: async ({ city: _city }) => ({ condition: 'sunny', temp: 72 }),
 	schema: {
-		input: { city: z.string() },
+		input: z.object({ city: z.string() }),
 		output: z.object({ condition: z.string(), temp: z.number() })
 	}
 })

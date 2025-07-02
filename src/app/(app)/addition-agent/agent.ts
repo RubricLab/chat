@@ -7,7 +7,7 @@ export const { executeAgent: executeAdditionAgent, __ResponseEvent } = createAge
 		add: createTool({
 			execute: async ({ a, b }) => a + b,
 			schema: {
-				input: { a: z.number(), b: z.number() },
+				input: z.object({ a: z.number(), b: z.number() }),
 				output: z.number()
 			}
 		})

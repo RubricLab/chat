@@ -166,7 +166,10 @@ export const actions = {
 		description: 'Round to specified decimal places (default: 0)',
 		execute: round,
 		schema: {
-			input: z.object({ decimals: z.union([z.number(), z.null()]), value: z.number() }),
+			input: z.object({
+				decimals: z.union([z.number(), z.null()]),
+				value: z.number()
+			}),
 			output: z.number()
 		}
 	}),

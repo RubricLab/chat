@@ -16,18 +16,18 @@ export const blocks = {
 		description: 'Render a text input',
 		render: _ => ({ react: <TextInput emit={() => ''} />, state: '' }),
 		schema: {
-			input: {},
+			input: z.object({}),
 			output: z.string()
 		}
 	}),
 	userSelect: createStatefulBlock({
 		description: 'Render a user select',
-		render: ({ users }) => ({
+		render: users => ({
 			react: <UserSelect users={users} emit={() => ''} />,
 			state: { email: '', id: '' }
 		}),
 		schema: {
-			input: { users: z.array(user) },
+			input: z.array(user),
 			output: user
 		}
 	})

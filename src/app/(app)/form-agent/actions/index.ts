@@ -13,7 +13,7 @@ export const actions = {
 		description: 'Get users',
 		execute: getUsers,
 		schema: {
-			input: { limit: z.number() },
+			input: z.object({ limit: z.number() }),
 			output: z.array(user)
 		}
 	}),
@@ -21,7 +21,7 @@ export const actions = {
 		description: 'Send an email',
 		execute: sendEmail,
 		schema: {
-			input: { body: z.string(), subject: z.string(), to: user },
+			input: z.object({ body: z.string(), subject: z.string(), to: user }),
 			output: z.undefined()
 		}
 	})

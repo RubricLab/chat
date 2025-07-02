@@ -18,7 +18,7 @@ Today's date is ${new Date().toLocaleDateString('en-US', { day: 'numeric', month
 const searchTool = createTool({
 	execute: search,
 	schema: {
-		input: { numResults: z.number().min(10).max(100), query: z.string() },
+		input: z.object({ numResults: z.number().min(10).max(100), query: z.string() }),
 		output: z.array(z.object({ title: z.string().nullable(), url: z.string() }))
 	}
 })
@@ -26,7 +26,7 @@ const searchTool = createTool({
 const getContentsTool = createTool({
 	execute: getContents,
 	schema: {
-		input: { url: z.string() },
+		input: z.object({ url: z.string() }),
 		output: z.object({ content: z.string(), title: z.string().nullable(), url: z.string() })
 	}
 })

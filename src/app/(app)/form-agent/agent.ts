@@ -22,16 +22,16 @@ function getResponseFormat() {
 		{ ...actionSchemas, ...blockSchemas },
 		{
 			additionalCompatibilities: [
-				// {
-				// 	type: z.number(),
-				// 	compatibilities: [z.number()]
-				// },
-				// {
-				// 	type: z.string(),
-				// 	compatibilities: [z.literal('STRING')]
-				// },
+				{
+					compatibilities: [z.number()],
+					type: z.number()
+				},
+				{
+					compatibilities: [z.literal('STRING')],
+					type: z.string()
+				}
 			],
-			strict: true
+			strict: false
 		}
 	)
 

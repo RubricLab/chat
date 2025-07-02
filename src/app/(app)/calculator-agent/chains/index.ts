@@ -2,7 +2,9 @@ import { createChain, createDrill } from '@rubriclab/chains'
 import { z } from 'zod/v4'
 import { actionSchemas } from '../actions'
 
-export const { definitions, compatibilities } = createChain(actionSchemas, { strict: false })
+export const { definitions, compatibilities } = createChain(actionSchemas, {
+	strict: false
+})
 
 export const chain = z.union(Object.values(definitions))
 

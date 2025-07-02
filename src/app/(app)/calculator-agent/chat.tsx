@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSession } from '~/auth/client'
 import type {
 	CalculatorAgentResponseEvent,
@@ -23,7 +23,7 @@ type Message =
 			message: string
 	  }
 
-function RenderChain({ chain }: { chain: Chain }): ReactNode {
+function RenderChain({ chain }: { chain: Chain }) {
 	const [result, setResult] = useState<Awaited<ReturnType<typeof executeChain>> | null>(null)
 	useEffect(() => {
 		executeChain(chain).then(setResult)
