@@ -27,7 +27,7 @@ const responseFormat = createResponseFormat({
 	})
 })
 
-console.dir(responseFormat, { depth: null })
+// console.dir(responseFormat, { depth: null })
 
 const systemPrompt = `You are a state of the art form building agent.
 You will be tasked with building a UI to solve a use case.
