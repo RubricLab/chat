@@ -17,15 +17,16 @@ export async function sendEmail({
 	body: string
 }) {
 	const { error } = await resend.emails.send({
-		from: 'Rubric Chat <chat@mail.rubric.sh>',
+		from: 'Rubric Chat<chat@mail.rubric.sh>',
 		subject,
 		text: body,
 		to: [to.email]
 	})
+	console.log('sent email')
 
 	if (error) {
 		throw error
 	}
 
-	return undefined
+	return null
 }

@@ -3,6 +3,6 @@
 import db from '~/db'
 import { users } from '~/db/schema/auth'
 
-export async function getUsers({ limit }: { limit: number }) {
-	return db.select().from(users).limit(limit)
+export async function getUsers() {
+	return db.select().from(users)
 }

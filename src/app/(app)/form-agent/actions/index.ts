@@ -13,7 +13,7 @@ export const actions = {
 		description: 'Get users',
 		execute: getUsers,
 		schema: {
-			input: z.object({ limit: z.number() }),
+			input: z.null(),
 			output: z.array(user)
 		}
 	}),
@@ -22,7 +22,18 @@ export const actions = {
 		execute: sendEmail,
 		schema: {
 			input: z.object({ body: z.string(), subject: z.string(), to: user }),
-			output: z.undefined()
+			output: z.null()
 		}
 	})
 }
+
+export const actionSchemas = Object.fromEntries(
+	Object.entries(actions).map(([key, { schema }]) => [key, schema])
+) as { [K in keyof typeof actions]: (typeof actions)[K]['schema'] }
+
+export type Actions = {
+	[K in keyof typeof actions]: {
+		action: K
+		params: z.infer<(typeof actions)[K]['schema']['input']>
+	}
+}[keyof typeof actions]

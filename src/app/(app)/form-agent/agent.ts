@@ -1,64 +1,33 @@
 import { createActionDocs } from '@rubriclab/actions'
-import { createAgent, createTool } from '@rubriclab/agents'
+import { createAgent } from '@rubriclab/agents'
 import { createResponseFormat } from '@rubriclab/agents/lib/responseFormat'
 import { createBlocksDocs } from '@rubriclab/blocks'
-import { createChain } from '@rubriclab/chains'
 import { z } from 'zod/v4'
 import { actions } from '~/form-agent/actions'
-import { blocks as __blocks, genericBlocks } from '~/form-agent/blocks'
+import { blocks } from '~/form-agent/blocks'
+import { chain, compatibilities, definitions } from './chains'
 
-let blocks = __blocks
+const fullstackRegistry = z.registry<{ id: string }>()
 
-function getResponseFormat() {
-	const actionSchemas = Object.fromEntries(
-		Object.entries(actions).map(([key, { schema }]) => [key, schema])
-	) as { [K in keyof typeof actions]: (typeof actions)[K]['schema'] }
-
-	const blockSchemas = Object.fromEntries(
-		Object.entries(blocks).map(([key, { schema }]) => [key, schema])
-	) as { [K in keyof typeof blocks]: (typeof blocks)[K]['schema'] }
-
-	const { definitions, compatibilities } = createChain(
-		{ ...actionSchemas, ...blockSchemas },
-		{
-			additionalCompatibilities: [
-				{
-					compatibilities: [z.number()],
-					type: z.number()
-				},
-				{
-					compatibilities: [z.literal('STRING')],
-					type: z.string()
-				}
-			],
-			strict: false
-		}
-	)
-
-	const chain = z.union(Object.values(definitions))
-
-	const fullstackRegistry = z.registry<{ id: string }>()
-
-	// Register definitions
-	for (const [id, { register }] of Object.entries(definitions)) {
-		register(fullstackRegistry, { id })
-	}
-
-	// Register compatabilities
-	for (const [id, { register }] of Object.entries(compatibilities)) {
-		register(fullstackRegistry, { id })
-	}
-	const responseFormat = createResponseFormat({
-		name: 'chain',
-		// Pass the registry to build the recursive schema.
-		registry: fullstackRegistry,
-		schema: z.object({
-			chain
-		})
-	})
-	// console.dir(responseFormat, { depth: null })
-	return responseFormat
+// Register definitions
+for (const [id, { register }] of Object.entries(definitions)) {
+	register(fullstackRegistry, { id })
 }
+
+// Register compatabilities
+for (const [id, { register }] of Object.entries(compatibilities)) {
+	register(fullstackRegistry, { id })
+}
+const responseFormat = createResponseFormat({
+	name: 'chain',
+	// Pass the registry to build the recursive schema.
+	registry: fullstackRegistry,
+	schema: z.object({
+		chain
+	})
+})
+
+console.dir(responseFormat, { depth: null })
 
 const systemPrompt = `You are a state of the art form building agent.
 You will be tasked with building a UI to solve a use case.
@@ -82,37 +51,16 @@ If a block or action has an output type that is compatible with an argument of a
 To chain a block or action (referred to as a node), you can simply next a call to another node in the argument that you pass to the node.
 You can do this as many times as you want, creating powerful fullstack payloads!
 
-===== Generic Blocks =====
-Generic Blocks are a special type of block that can be used to dynamically instantiate a new block.
-Since the system requires rigid input and output schemas, sometimes you will need to instantiate a generic block in order to have the available structure to create your fullstack payload.
-When you instantiate a generic block with a tool call, the structured outputs available under the hood will change to include the new block's input and output schemas.
-
-Generic Blocks are instantiated with tool calls. You have access to the following generic blocks:
-${createActionDocs({ actions: genericBlocks })}
-
 Your job is to create chains of nodes to create a fullstack payload.
 First, consider any generic blocks that you need to instantiate. You can call tools to instantiate them.
 When you are ready to generate the fullstack payload, output your final answer.
 
 Thank you for your help, let's get started!`
 
-const instantiateFormTool = createTool({
-	execute: async input => {
-		blocks = {
-			...blocks,
-			...{
-				[`instantiateForm_${input.actionName}`]: await genericBlocks.instantiateForm.execute(input)
-			}
-		}
-		return undefined
-	},
-	schema: genericBlocks.instantiateForm.schema
-})
-
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
-	responseFormat: getResponseFormat,
+	responseFormat,
 	systemPrompt,
-	tools: { instantiateForm: instantiateFormTool }
+	tools: {}
 })
 
 export { eventTypes as formAgentEventTypes }

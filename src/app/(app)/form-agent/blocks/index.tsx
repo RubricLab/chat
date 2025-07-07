@@ -1,31 +1,81 @@
-import {
-	createBlock,
-	createGenericActionExecutorBlock,
-	createStatefulBlock
-} from '@rubriclab/blocks'
+import { createBlock, createStatefulBlock, REACT_NODE } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
-import { actions, user } from '../actions'
-import { GenericForm } from './genericForm'
+import { user } from '../actions'
+import { execute } from '../actions/server'
+import SendEmailForm from './sendEmailForm'
 import { TextInput } from './textInput'
 import { UserSelect } from './userSelect'
 
-// const ReactNode = z.literal('ReactNode')
-
+function statefull<Type extends z.ZodType>(type: Type) {
+	return z.object({
+		react: REACT_NODE,
+		state: type
+	})
+}
 export const blocks = {
+	sendEmailForm: createBlock({
+		description: 'Render a form that sends an email to a user',
+		render: fields => (
+			<SendEmailForm
+				statefullFields={fields}
+				mutation={async params => {
+					await execute({ action: 'sendEmail', params })
+				}}
+			/>
+		),
+		schema: {
+			input: z.object({
+				body: statefull(z.string()),
+				subject: statefull(z.string()),
+				to: statefull(
+					z.object({
+						email: z.string(),
+						id: z.string()
+					})
+				)
+			})
+		}
+	}),
 	textInput: createStatefulBlock({
 		description: 'Render a text input',
-		render: _ => ({ react: <TextInput emit={() => ''} />, state: '' }),
+		render: () => {
+			let value = ''
+			return {
+				getState: () => value,
+				react: (
+					<TextInput
+						emit={v => {
+							value = v
+						}}
+					/>
+				)
+			}
+		},
 		schema: {
-			input: z.object({}),
+			input: z.null(),
 			output: z.string()
 		}
 	}),
 	userSelect: createStatefulBlock({
 		description: 'Render a user select',
-		render: users => ({
-			react: <UserSelect users={users} emit={() => ''} />,
-			state: { email: '', id: '' }
-		}),
+		render: users => {
+			const defaultUser = users[0]
+			if (!defaultUser) {
+				throw 'no users to select'
+			}
+			let value = defaultUser
+			return {
+				getState: () => value,
+				react: (
+					<UserSelect
+						users={users}
+						emit={v => {
+							value = v
+						}}
+					/>
+				)
+			}
+		},
 		schema: {
 			input: z.array(user),
 			output: user
@@ -33,22 +83,13 @@ export const blocks = {
 	})
 }
 
-export const genericBlocks = {
-	instantiateForm: createGenericActionExecutorBlock({
-		actionOptions: actions,
-		description: `Creates a form from for a specific action. By calling this, a new block is created and added to the structured output schema.
-The newly created block will have fields that match the action input schema, and a button that will call the action when clicked. This tool must be called before trying to render any form.`,
-		instantiate: ({ actionName }) => {
-			const action = actions[actionName] as (typeof actions)[keyof typeof actions]
+export const blockSchemas = Object.fromEntries(
+	Object.entries(blocks).map(([key, { schema }]) => [key, schema])
+) as { [K in keyof typeof blocks]: (typeof blocks)[K]['schema'] }
 
-			return createBlock({
-				description: undefined,
-				// biome-ignore lint/suspicious/noExplicitAny: We should fix this
-				render: input => <GenericForm fields={input} onSubmit={action.execute as any} />,
-				schema: {
-					input: action.schema.input
-				}
-			})
-		}
-	})
-}
+export type Blocks = {
+	[K in keyof typeof blocks]: {
+		block: K
+		props: z.infer<(typeof blocks)[K]['schema']['input']>
+	}
+}[keyof typeof blocks]
