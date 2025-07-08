@@ -2,6 +2,7 @@ import { createAction } from '@rubriclab/actions'
 import { z } from 'zod/v4'
 import { getUsers } from './getUsers'
 import { sendEmail } from './sendEmail'
+import { updateUser } from './updateUser'
 
 export const user = z.object({
 	email: z.string(),
@@ -22,6 +23,19 @@ export const actions = {
 		execute: sendEmail,
 		schema: {
 			input: z.object({ body: z.string(), subject: z.string(), to: user }),
+			output: z.null()
+		}
+	}),
+	updateUser: createAction({
+		description: 'Updates a user',
+		execute: updateUser,
+		schema: {
+			input: z.object({
+				update: z.object({
+					name: z.string()
+				}),
+				user
+			}),
 			output: z.null()
 		}
 	})

@@ -4,5 +4,5 @@ import db from '~/db'
 import { users } from '~/db/schema/auth'
 
 export async function getUsers() {
-	return db.select().from(users)
+	return await db.select().from(users)
 }

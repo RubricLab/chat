@@ -12,6 +12,7 @@ function statefull<Type extends z.ZodType>(type: Type) {
 		state: type
 	})
 }
+
 export const blocks = {
 	sendEmailForm: createBlock({
 		description: 'Render a form that sends an email to a user',
@@ -38,19 +39,10 @@ export const blocks = {
 	}),
 	textInput: createStatefulBlock({
 		description: 'Render a text input',
-		render: () => {
-			let value = ''
-			return {
-				getState: () => value,
-				react: (
-					<TextInput
-						emit={v => {
-							value = v
-						}}
-					/>
-				)
-			}
-		},
+		render: () => ({
+			component: ({ emit }) => <TextInput emit={emit} />,
+			initialState: ''
+		}),
 		schema: {
 			input: z.null(),
 			output: z.string()
@@ -58,24 +50,10 @@ export const blocks = {
 	}),
 	userSelect: createStatefulBlock({
 		description: 'Render a user select',
-		render: users => {
-			const defaultUser = users[0]
-			if (!defaultUser) {
-				throw 'no users to select'
-			}
-			let value = defaultUser
-			return {
-				getState: () => value,
-				react: (
-					<UserSelect
-						users={users}
-						emit={v => {
-							value = v
-						}}
-					/>
-				)
-			}
-		},
+		render: users => ({
+			component: ({ emit }) => <UserSelect users={users} emit={emit} />,
+			initialState: users[0] ?? (undefined as never)
+		}),
 		schema: {
 			input: z.array(user),
 			output: user

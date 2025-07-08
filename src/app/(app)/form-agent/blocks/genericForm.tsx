@@ -1,36 +1,48 @@
-'use client'
+import { createTool } from '@rubriclab/agents'
+import { createGenericBlock } from '@rubriclab/blocks'
+import { z } from 'zod/v4'
+import type { $strict } from 'zod/v4/core'
+import { actionSchemas } from '../actions'
+import { execute } from '../actions/server'
 
-import type { ReactNode } from 'react'
-import type { z } from 'zod/v4'
-
-export function GenericForm<Input extends Record<string, z.ZodType>>({
-	fields,
-	onSubmit
-}: {
-	fields: {
-		[key in keyof Input]: z.infer<Input[key]> | { react: ReactNode; value: z.infer<Input[key]> }
-	}
-	onSubmit: (input: { [key in keyof Input]: z.infer<Input[key]> }) => void
-}) {
-	const values = Object.fromEntries(
-		Object.entries(fields).map(([key, { value }]) => [key, value])
-	) as {
-		[K in keyof Input]: z.infer<Input[K]>
-	}
-
-	const react = Object.entries(fields).map(([key, react]) => <div key={key}>{react}</div>)
-
-	return (
-		<form
-			onSubmit={e => {
-				e.preventDefault()
-				onSubmit(values)
-			}}
+const formTypes = Object.fromEntries(
+	Object.entries(actionSchemas)
+		.filter(([_, { input }]) => {
+			return input !== null
+		})
+		.map(([key, { input }]) => [
+			key,
+			{
+				input: z.strictObject({
+					fields: input,
+					mutation: z.literal(key)
+				}),
+				output: z.null()
+			}
+		])
+) as {
+	[K in keyof typeof actionSchemas as (typeof actionSchemas)[K]['input'] extends z.ZodNull
+		? never
+		: K]: {
+		input: z.ZodObject<
+			{ mutation: z.ZodLiteral<K>; fields: (typeof actionSchemas)[K]['input'] },
+			$strict
 		>
-			{react}
-			<button type="submit" onClick={() => onSubmit(values)}>
-				Send
-			</button>
-		</form>
-	)
+		output: z.ZodNull
+	}
 }
+
+export const instantiateFormTool = createTool(
+	createGenericBlock({
+		handleBlock(block) {
+			console.log(block)
+		},
+		render({ mutation, fields }) {
+			async function ex() {
+				await execute({ action: mutation, params: fields })
+			}
+			return <form onSubmit={ex}>HEY</form>
+		},
+		types: formTypes
+	})
+)

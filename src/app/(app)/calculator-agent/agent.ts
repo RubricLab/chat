@@ -48,8 +48,6 @@ When you are ready to generate the fullstack payload, output your final answer.
 
 Thank you for your help, let's get started!`
 
-// console.dir(responseFormat, { depth: null })
-
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
 	responseFormat,
 	systemPrompt,
