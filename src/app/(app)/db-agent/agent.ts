@@ -12,6 +12,7 @@ ${createActionDocs({ actions })}`
 const getUsersTool = createTool(actions.getUsers)
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
+	model: 'gpt-4.1',
 	systemPrompt,
 	tools: { getUsers: getUsersTool }
 })

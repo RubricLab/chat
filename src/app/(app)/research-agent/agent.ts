@@ -40,6 +40,7 @@ const responseFormat = createResponseFormat({
 })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
+	model: 'gpt-4.1',
 	responseFormat,
 	systemPrompt,
 	tools: { getContents: getContentsTool, search: searchTool }

@@ -44,6 +44,7 @@ Thank you for your help, let's get started!`
 // console.dir(responseFormat, { depth: null })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
+	model: 'gpt-4.1',
 	responseFormat,
 	systemPrompt,
 	tools: {}

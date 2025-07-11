@@ -12,6 +12,7 @@ const weatherTool = createTool({
 })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
+	model: 'gpt-4.1',
 	systemPrompt,
 	tools: { getWeather: weatherTool }
 })

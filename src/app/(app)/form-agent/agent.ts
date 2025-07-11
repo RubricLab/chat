@@ -74,6 +74,7 @@ When you are ready to generate the fullstack payload, output your final answer.
 Thank you for your help, let's get started!`
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
+	model: 'gpt-4.1',
 	responseFormat: getResponseFormat,
 	systemPrompt,
 	tools: {
