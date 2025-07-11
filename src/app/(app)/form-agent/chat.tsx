@@ -96,7 +96,10 @@ export function Chat() {
 	return (
 		<div className="w-full">
 			<ChatMessages userId={userId} messages={messages} addMessage={addMessage} />
-			<ChatBox placeholder="Create a form to send an email" submit={handleSubmit} />
+			<ChatBox
+				placeholder="Create a form to send an email - put a dropdown of contacts in the recipient field"
+				submit={handleSubmit}
+			/>
 		</div>
 	)
 }

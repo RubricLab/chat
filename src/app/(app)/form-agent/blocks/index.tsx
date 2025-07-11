@@ -1,42 +1,16 @@
-import { createBlock, createStatefulBlock, REACT_NODE } from '@rubriclab/blocks'
+import {
+	type BlockWithoutRenderArgs,
+	createStatefulBlock,
+	type StatefulBlockWithoutRenderArgs
+} from '@rubriclab/blocks'
 import { z } from 'zod/v4'
-import { user } from '../actions'
-import { execute } from '../actions/server'
-import SendEmailForm from './sendEmailForm'
 import { TextInput } from './textInput'
-import { UserSelect } from './userSelect'
 
-function statefull<Type extends z.ZodType>(type: Type) {
-	return z.object({
-		react: REACT_NODE,
-		state: type
-	})
-}
+export type AnyBlock =
+	| BlockWithoutRenderArgs<z.ZodType>
+	| StatefulBlockWithoutRenderArgs<z.ZodType, z.ZodType>
 
-export const blocks = {
-	sendEmailForm: createBlock({
-		description: 'Render a form that sends an email to a user',
-		render: fields => (
-			<SendEmailForm
-				statefullFields={fields}
-				mutation={async params => {
-					await execute({ action: 'sendEmail', params })
-				}}
-			/>
-		),
-		schema: {
-			input: z.object({
-				body: statefull(z.string()),
-				subject: statefull(z.string()),
-				to: statefull(
-					z.object({
-						email: z.string(),
-						id: z.string()
-					})
-				)
-			})
-		}
-	}),
+export const staticBlocks = {
 	textInput: createStatefulBlock({
 		description: 'Render a text input',
 		render: () => ({
@@ -47,27 +21,30 @@ export const blocks = {
 			input: z.null(),
 			output: z.string()
 		}
-	}),
-	userSelect: createStatefulBlock({
-		description: 'Render a user select',
-		render: users => ({
-			component: ({ emit }) => <UserSelect users={users} emit={emit} />,
-			initialState: users[0] ?? (undefined as never)
-		}),
-		schema: {
-			input: z.array(user),
-			output: user
-		}
 	})
 }
 
-export const blockSchemas = Object.fromEntries(
-	Object.entries(blocks).map(([key, { schema }]) => [key, schema])
-) as { [K in keyof typeof blocks]: (typeof blocks)[K]['schema'] }
+export const blocks = new Map<string, AnyBlock>([
+	[
+		'textInput',
+		createStatefulBlock({
+			description: 'Render a text input',
+			render: () => ({
+				component: ({ emit }) => <TextInput emit={emit} />,
+				initialState: ''
+			}),
+			schema: {
+				input: z.null(),
+				output: z.string()
+			}
+		})
+	] as const
+])
 
-export type Blocks = {
-	[K in keyof typeof blocks]: {
-		block: K
-		props: z.infer<(typeof blocks)[K]['schema']['input']>
-	}
-}[keyof typeof blocks]
+export function getBlocks() {
+	return Object.fromEntries(blocks) as Record<string, AnyBlock>
+}
+
+export function addBlock({ name, block }: { name: string; block: AnyBlock }) {
+	blocks.set(name, block)
+}
