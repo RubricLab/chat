@@ -58,7 +58,11 @@ export const form = createGenericBlock({
 	render({ title, mutation, fields }) {
 		async function exec() {
 			const vals = Object.fromEntries(
-				Object.entries(fields).map(([key, [getState, _]]) => [key, getState()])
+				Object.entries(fields).map(([key, [getState, _]]) => [
+					key,
+					// TECH DEBT
+					(getState as unknown as () => typeof getState)()
+				])
 			)
 			// biome-ignore lint/suspicious/noExplicitAny:_
 			await execute({ action: mutation, params: vals as any })

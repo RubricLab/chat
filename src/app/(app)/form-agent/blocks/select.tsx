@@ -61,7 +61,7 @@ export const select = createGenericStatefulBlock({
 						{data.map((element, i) => {
 							return (
 								<option key={`option-${i.toString()}`} value={JSON.stringify(element)}>
-									{element[label].toString()}
+									{element[label as keyof typeof element].toString()}
 								</option>
 							)
 						})}

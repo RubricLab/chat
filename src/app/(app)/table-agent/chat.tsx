@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSession } from '~/auth/client'
 import { ChatBox } from '~/components/chatBox'
 import { Code } from '~/components/code'
@@ -8,8 +8,8 @@ import { Dropdown } from '~/components/dropdown'
 import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
 import type { TableAgentResponseEvent, TableAgentToolEvent } from '~/table-agent/agent'
 import { sendMessage } from '~/table-agent/ai'
-import { executeChain } from '~/table-agent/chains/execute'
 import { useEvents } from '~/table-agent/events/client'
+import { RenderChain } from './chains/execute'
 
 type Message =
 	| TableAgentToolEvent
@@ -19,15 +19,6 @@ type Message =
 			type: 'user_message'
 			message: string
 	  }
-
-function RenderChain({ chain }: { chain: TableAgentResponseEvent['message']['chain'] }) {
-	const [result, setResult] = useState<Awaited<ReturnType<typeof executeChain>> | null>(null)
-	useEffect(() => {
-		executeChain(chain).then(setResult)
-	}, [chain])
-
-	return result
-}
 
 function MessageSwitch({ message }: { message: Message }) {
 	switch (message.type) {
