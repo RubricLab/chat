@@ -113,7 +113,7 @@ export function Chat() {
 	return (
 		<div className="w-full">
 			<ChatMessages userId={userId} messages={messages} addMessage={addMessage} />
-			<ChatBox placeholder="Generate a table of users" submit={handleSubmit} />
+			<ChatBox placeholder="Generate a table of users - with an option to delete each one" submit={handleSubmit} />
 		</div>
 	)
 }
