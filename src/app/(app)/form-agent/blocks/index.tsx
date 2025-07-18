@@ -1,50 +1,48 @@
 import {
-	type BlockWithoutRenderArgs,
+	type AnyBlock,
+	createBlock,
 	createStatefulBlock,
-	type StatefulBlockWithoutRenderArgs
-} from '@rubriclab/blocks'
-import { z } from 'zod/v4'
-import { TextInput } from './textInput'
-
-export type AnyBlock =
-	| BlockWithoutRenderArgs<z.ZodType>
-	| StatefulBlockWithoutRenderArgs<z.ZodType, z.ZodType>
+} from "@rubriclab/blocks";
+import { z } from "zod/v4";
+import { raw } from "../brands";
+import { form } from "./form";
+import { select } from "./select";
+import { TextInput } from "./textInput";
 
 export const staticBlocks = {
+	paragraph: createBlock({
+		description: "Render a text input",
+		render: (text) => <p>{text}</p>,
+		schema: {
+			input: raw(z.string()),
+		},
+	}),
 	textInput: createStatefulBlock({
-		description: 'Render a text input',
+		description: "Render a text input",
 		render: () => ({
 			component: ({ emit }) => <TextInput emit={emit} />,
-			initialState: ''
+			initialState: "",
 		}),
 		schema: {
-			input: z.null(),
-			output: z.string()
-		}
-	})
-}
+			input: raw(z.null()),
+			output: z.string(),
+		},
+	}),
+};
 
-export const blocks = new Map<string, AnyBlock>([
-	[
-		'textInput',
-		createStatefulBlock({
-			description: 'Render a text input',
-			render: () => ({
-				component: ({ emit }) => <TextInput emit={emit} />,
-				initialState: ''
-			}),
-			schema: {
-				input: z.null(),
-				output: z.string()
-			}
-		})
-	] as const
-])
+export const genericBlocks = {
+	form,
+	select,
+};
+
+export const blocksMap = new Map<string, AnyBlock>(
+	Object.entries(staticBlocks),
+);
 
 export function getBlocks() {
-	return Object.fromEntries(blocks) as Record<string, AnyBlock>
+	return Object.fromEntries(blocksMap) as Record<string, AnyBlock>;
 }
 
 export function addBlock({ name, block }: { name: string; block: AnyBlock }) {
-	blocks.set(name, block)
+	blocksMap.set(name, block);
 }

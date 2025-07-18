@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useSession } from '~/auth/client'
 import { Code } from '~/components/code'
-import { AssistantMessage, UserMessage } from '~/components/message'
+import { Dropdown } from '~/components/dropdown'
+import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
 import { sendMessage } from '~/form-agent/ai'
 import { useEvents } from '~/form-agent/events/client'
 import { ChatBox } from '../../../lib/components/chatBox'
@@ -28,25 +29,36 @@ function MessageSwitch({ message }: { message: Message }) {
 		case 'assistant_message': {
 			return (
 				<AssistantMessage>
-					<Code json={JSON.parse(JSON.stringify(message.message.chain))} />
+					<Dropdown title="View Chain">
+						<Code json={JSON.parse(JSON.stringify(message.message.chain))} />
+					</Dropdown>
 					<RenderChain chain={message.message.chain} />
 				</AssistantMessage>
 			)
 		}
 
-		// case 'function_call': {
-		// 	switch (message.name) {
-		// 		case 'instantiateForm': {
-		// 			return (
-		// 				<ToolMessage
-		// 					name="instantiateForm"
-		// 					args={<>Instantiating form for the {message.arguments.actionName} action...</>}
-		// 					result={<>Form instantiated</>}
-		// 				/>
-		// 			)
-		// 		}
-		// 	}
-		// }
+		case 'function_call': {
+			switch (message.name) {
+				case 'instantiateForm': {
+					return (
+						<ToolMessage
+							name="instantiateForm"
+							args={<>Instantiating form for the {message.arguments} action...</>}
+							result={<>Form instantiated</>}
+						/>
+					)
+				}
+				case 'instantiateSelect': {
+					return (
+						<ToolMessage
+							name="instantiateSelect"
+							args={<>Instantiating select for the {message.arguments} action...</>}
+							result={<>Select instantiated</>}
+						/>
+					)
+				}
+			}
+		}
 	}
 }
 
@@ -62,8 +74,9 @@ function ChatMessages({
 	useEvents({
 		id: userId,
 		on: {
-			assistant_message: addMessage
-			// instantiateForm: addMessage
+			assistant_message: addMessage,
+			instantiateForm: addMessage,
+			instantiateSelect: addMessage
 		}
 	})
 

@@ -1,5 +1,4 @@
-import { createDrill } from '@rubriclab/chains'
-import { createChain } from '@rubriclab/chains/lib/chains'
+import { createChain, createDrill } from '@rubriclab/chains'
 import { z } from 'zod/v4'
 import { blocks } from '~/website-agent/blocks'
 
@@ -8,16 +7,6 @@ const blockSchemas = Object.fromEntries(
 ) as { [K in keyof typeof blocks]: (typeof blocks)[K]['schema'] }
 
 const { definitions, compatibilities } = createChain(blockSchemas, {
-	additionalCompatibilities: [
-		{
-			compatibilities: [z.string()],
-			type: z.string()
-		},
-		{
-			compatibilities: [z.number()],
-			type: z.number()
-		}
-	],
 	strict: true
 })
 

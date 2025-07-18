@@ -7,11 +7,8 @@ import { chain, compatibilities, definitions } from './chains'
 
 const actionsRegistry = z.registry<{ id: string }>()
 
-// Register definitions
-for (const [id, { register }] of Object.entries(definitions)) {
-	// @ts-expect-error // out of TS recursion budget
-	register(actionsRegistry, { id })
-}
+// @ts-expect-error (union is too large for TS here) // Register definitions
+for (const [id, { register }] of Object.entries(definitions)) register(actionsRegistry, { id })
 
 // Register compatabilities
 for (const [id, { register }] of Object.entries(compatibilities)) register(actionsRegistry, { id })

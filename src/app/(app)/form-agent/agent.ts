@@ -1,25 +1,25 @@
-import { createActionDocs } from '@rubriclab/actions'
+import { type AnyAction, createActionDocs } from '@rubriclab/actions'
 import { createAgent } from '@rubriclab/agents'
 import { createResponseFormat } from '@rubriclab/agents/lib/responseFormat'
 import { createBlocksDocs } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import { actions } from '~/form-agent/actions'
 import { getBlocks } from '~/form-agent/blocks'
-import { genericBlocks } from './blocks/generics'
-import { instantiateFormTool } from './blocks/generics/genericForm'
-import { instantiateSelectTool } from './blocks/generics/genericSelect'
+import { genericBlocks } from './blocks'
+import { instantiateForm } from './blocks/form'
+import { instantiateSelect } from './blocks/select'
+// import { instantiateSelect } from './blocks/select'
 import { getChain } from './chains'
 
 function getResponseFormat() {
 	const { definitions, compatibilities, chain } = getChain(getBlocks())
 	const fullstackRegistry = z.registry<{ id: string }>()
 
-	// Register definitions
+	// Register compatabilities
 	for (const [id, { register }] of Object.entries(definitions)) {
 		register(fullstackRegistry, { id })
 	}
 
-	// Register compatabilities
 	for (const [id, { register }] of Object.entries(compatibilities)) {
 		register(fullstackRegistry, { id })
 	}
@@ -33,7 +33,7 @@ function getResponseFormat() {
 		})
 	})
 
-	console.dir(responseFormat, { depth: null })
+	// console.dir(responseFormat, { depth: null })
 	return responseFormat
 }
 
@@ -65,7 +65,7 @@ Since the system requires rigid input and output schemas, sometimes you will nee
 When you instantiate a generic block with a tool call, the structured outputs available under the hood will change to include the new block's input and output schemas.
 
 Generic Blocks are instantiated with tool calls. You have access to the following generic blocks:
-${createActionDocs({ actions: genericBlocks })}
+${createActionDocs({ actions: genericBlocks as unknown as Record<string, AnyAction> })}
 
 Your job is to create chains of nodes to create a fullstack payload.
 First, consider any generic blocks that you need to instantiate. You can call tools to instantiate them.
@@ -78,8 +78,8 @@ const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
 	responseFormat: getResponseFormat,
 	systemPrompt,
 	tools: {
-		instantiateFormTool,
-		instantiateSelectTool
+		instantiateForm,
+		instantiateSelect
 	}
 })
 

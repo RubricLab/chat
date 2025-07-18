@@ -106,6 +106,12 @@ export default function () {
 						description={<>Form builder with generic blocks and dynamic structured chains</>}
 						source="https://github.com/rubriclab/chat/tree/main/src/app/(app)/form-agent"
 					/>
+					<AgentRow
+						href="/table-agent"
+						name="Table Agent [WIP]"
+						description={<>...</>}
+						source="https://github.com/rubriclab/chat/tree/main/src/app/(app)/table-agent"
+					/>
 				</tbody>
 			</table>
 		</div>

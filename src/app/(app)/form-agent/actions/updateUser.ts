@@ -8,11 +8,11 @@ import type { user as userSchema } from './index'
 
 export async function updateUser({
 	user,
-	update
+	name
 }: {
 	user: z.infer<typeof userSchema>
-	update: { name: string }
+	name: string
 }) {
-	await db.update(users).set(update).where(eq(users.id, user.id))
+	await db.update(users).set({ name }).where(eq(users.id, user.id))
 	return null
 }

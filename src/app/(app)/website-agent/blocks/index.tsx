@@ -1,5 +1,6 @@
 import { createBlock, REACT_NODE } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
+import { raw_number, raw_string, url } from '../brands'
 import { Card } from './card'
 import { Code } from './code'
 import { Container } from './container'
@@ -23,7 +24,7 @@ export const blocks = {
 	code: createBlock({
 		description: 'Render code block',
 		render: ({ code }) => <Code code={code} />,
-		schema: { input: z.object({ code: z.string() }) }
+		schema: { input: z.object({ code: raw_string }) }
 	}),
 
 	// Layout blocks
@@ -31,7 +32,7 @@ export const blocks = {
 		description: 'Container with max width',
 		render: ({ children, maxWidth }) => <Container maxWidth={maxWidth}>{children}</Container>,
 		schema: {
-			input: z.object({ children: z.array(REACT_NODE), maxWidth: z.number() })
+			input: z.object({ children: z.array(REACT_NODE), maxWidth: raw_number })
 		}
 	}),
 	footer: createBlock({
@@ -42,7 +43,7 @@ export const blocks = {
 	grid: createBlock({
 		description: 'Grid layout',
 		render: ({ children, columns }) => <Grid columns={columns}>{children}</Grid>,
-		schema: { input: z.object({ children: z.array(REACT_NODE), columns: z.number() }) }
+		schema: { input: z.object({ children: z.array(REACT_NODE), columns: raw_number }) }
 	}),
 	// Content blocks
 	heading: createBlock({
@@ -50,8 +51,8 @@ export const blocks = {
 		render: ({ text, level }) => <Heading text={text} level={level} />,
 		schema: {
 			input: z.object({
-				level: z.number(),
-				text: z.string()
+				level: raw_number,
+				text: raw_string
 			})
 		}
 	}),
@@ -63,22 +64,22 @@ export const blocks = {
 	image: createBlock({
 		description: 'Render an image',
 		render: ({ src, alt }) => <Image src={src} alt={alt} />,
-		schema: { input: z.object({ alt: z.string(), src: z.string() }) }
+		schema: { input: z.object({ alt: raw_string, src: url }) }
 	}),
 	link: createBlock({
 		description: 'Render a link',
 		render: ({ href, text }) => <Link href={href} text={text} />,
-		schema: { input: z.object({ href: z.string(), text: z.string() }) }
+		schema: { input: z.object({ href: raw_string, text: raw_string }) }
 	}),
 	paragraph: createBlock({
 		description: 'Render a paragraph',
 		render: ({ text }) => <Paragraph text={text} />,
-		schema: { input: z.object({ text: z.string() }) }
+		schema: { input: z.object({ text: raw_string }) }
 	}),
 	quote: createBlock({
 		description: 'Render a quote',
 		render: ({ text }) => <Quote text={text} />,
-		schema: { input: z.object({ text: z.string() }) }
+		schema: { input: z.object({ text: raw_string }) }
 	}),
 	section: createBlock({
 		description: 'Semantic section',
@@ -89,7 +90,7 @@ export const blocks = {
 		description: 'Stack children vertically',
 		render: ({ children, spacing }) => <Stack spacing={spacing}>{children}</Stack>,
 		schema: {
-			input: z.object({ children: z.array(REACT_NODE), spacing: z.number() })
+			input: z.object({ children: z.array(REACT_NODE), spacing: raw_number })
 		}
 	})
 }

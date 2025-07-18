@@ -8,6 +8,7 @@
 		"@rubriclab/blocks": "*",
 		"@rubriclab/chains": "*",
 		"@rubriclab/events": "*",
+		"@rubriclab/shapes": "*",
 		"@t3-oss/env-nextjs": "latest",
 		"@tailwindcss/postcss": "latest",
 		"drizzle-kit": "latest",
