@@ -3,7 +3,7 @@ import { createGenericStatefulBlock } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import type { $strict } from 'zod/v4/core'
 import { actionSchemas } from '../actions'
-import { raw } from '../brands'
+import { type Raw, raw } from '../brands'
 import { addBlock } from '.'
 
 const selectCompatibleActions = Object.fromEntries(
@@ -38,7 +38,7 @@ const selectTypes = Object.fromEntries(
 		input: z.ZodObject<
 			{
 				data: (typeof selectCompatibleActions)[K]['output']
-				label: ReturnType<typeof raw<z.ZodEnum>>
+				label: Raw<z.ZodEnum>
 			},
 			$strict
 		>

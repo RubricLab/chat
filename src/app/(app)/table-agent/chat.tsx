@@ -6,14 +6,14 @@ import { ChatBox } from '~/components/chatBox'
 import { Code } from '~/components/code'
 import { Dropdown } from '~/components/dropdown'
 import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
-import { sendMessage } from '~/form-agent/ai'
-import { useEvents } from '~/form-agent/events/client'
-import type { FormAgentResponseEvent, FormAgentToolEvent } from './agent'
+import type { TableAgentResponseEvent, TableAgentToolEvent } from '~/table-agent/agent'
+import { sendMessage } from '~/table-agent/ai'
+import { useEvents } from '~/table-agent/events/client'
 import { RenderChain } from './chains/execute'
 
 type Message =
-	| FormAgentToolEvent
-	| FormAgentResponseEvent
+	| TableAgentToolEvent
+	| TableAgentResponseEvent
 	| {
 			id: string
 			type: 'user_message'
@@ -28,32 +28,36 @@ function MessageSwitch({ message }: { message: Message }) {
 
 		case 'assistant_message': {
 			return (
-				<AssistantMessage>
-					<Dropdown title="View Chain">
-						<Code json={JSON.parse(JSON.stringify(message.message.chain))} />
-					</Dropdown>
-					<RenderChain chain={message.message.chain} />
-				</AssistantMessage>
+				<>
+					<AssistantMessage>
+						<Dropdown title="View Chain">
+							<Code json={JSON.parse(JSON.stringify(message.message.chain))} />
+						</Dropdown>
+					</AssistantMessage>
+					<AssistantMessage>
+						<RenderChain chain={message.message.chain} />
+					</AssistantMessage>
+				</>
 			)
 		}
 
 		case 'function_call': {
 			switch (message.name) {
-				case 'instantiateForm': {
+				case 'instantiateButton': {
 					return (
 						<ToolMessage
-							name="instantiateForm"
-							args={<>Instantiating form for the {message.arguments} action...</>}
-							// result={<>Form instantiated</>}
+							name="instantiateButton"
+							args={<>Instantiating button for the {message.arguments} action...</>}
+							// result={<>Button instantiated</>}
 						/>
 					)
 				}
-				case 'instantiateSelect': {
+				case 'instantiateTable': {
 					return (
 						<ToolMessage
-							name="instantiateSelect"
-							args={<>Instantiating select for the {message.arguments} action...</>}
-							// result={<>Select instantiated</>}
+							name="instantiateTable"
+							args={<>Instantiating table for the {message.arguments} action...</>}
+							// result={<>Table instantiated</>}
 						/>
 					)
 				}
@@ -75,8 +79,8 @@ function ChatMessages({
 		id: userId,
 		on: {
 			assistant_message: addMessage,
-			instantiateForm: addMessage,
-			instantiateSelect: addMessage
+			instantiateButton: addMessage,
+			instantiateTable: addMessage
 		}
 	})
 
@@ -109,10 +113,7 @@ export function Chat() {
 	return (
 		<div className="w-full">
 			<ChatMessages userId={userId} messages={messages} addMessage={addMessage} />
-			<ChatBox
-				placeholder="Create a form to send an email - put a dropdown of contacts in the recipient field"
-				submit={handleSubmit}
-			/>
+			<ChatBox placeholder="Generate a table of users" submit={handleSubmit} />
 		</div>
 	)
 }

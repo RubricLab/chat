@@ -5,7 +5,7 @@ import { z } from 'zod/v4'
 import type { $strict } from 'zod/v4/core'
 import { actionSchemas } from '../actions'
 import { execute } from '../actions/server'
-import { raw } from '../brands'
+import { type Raw, raw } from '../brands'
 // import { execute } from "../../actions/server";
 import { addBlock } from '.'
 
@@ -43,7 +43,7 @@ const formTypes = Object.fromEntries(
 	[ActionKey in keyof typeof formCompatibleActions]: {
 		input: z.ZodObject<
 			{
-				title: ReturnType<typeof raw<z.ZodString>>
+				title: Raw<z.ZodString>
 				fields: StatefulObject<(typeof formCompatibleActions)[ActionKey]['input']>
 				mutation: Branded<z.ZodLiteral<ActionKey>, 'mutation', false>
 			},
@@ -58,7 +58,11 @@ export const form = createGenericBlock({
 	render({ title, mutation, fields }) {
 		async function exec() {
 			const vals = Object.fromEntries(
-				Object.entries(fields).map(([key, [getState, _]]) => [key, getState()])
+				Object.entries(fields).map(([key, [getState, _]]) => [
+					key,
+					// TECH DEBT
+					(getState as unknown as () => typeof getState)()
+				])
 			)
 			// biome-ignore lint/suspicious/noExplicitAny:_
 			await execute({ action: mutation, params: vals as any })
