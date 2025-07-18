@@ -9,6 +9,14 @@ export async function sendMessage({ userId, message }: { userId: string; message
 		messages: [{ content: message, role: 'user' }],
 		onEvent: async events => {
 			switch (events.type) {
+				case 'function_call': {
+					await publish({
+						channel: userId,
+						eventType: events.name,
+						payload: events
+					})
+					break
+				}
 				case 'assistant_message':
 					await publish({
 						channel: userId,

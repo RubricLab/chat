@@ -2,12 +2,12 @@
 
 import { useState } from 'react'
 import { useSession } from '~/auth/client'
+import { ChatBox } from '~/components/chatBox'
 import { Code } from '~/components/code'
 import { Dropdown } from '~/components/dropdown'
 import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
 import { sendMessage } from '~/form-agent/ai'
 import { useEvents } from '~/form-agent/events/client'
-import { ChatBox } from '../../../lib/components/chatBox'
 import type { FormAgentResponseEvent, FormAgentToolEvent } from './agent'
 import { RenderChain } from './chains/execute'
 
@@ -44,7 +44,7 @@ function MessageSwitch({ message }: { message: Message }) {
 						<ToolMessage
 							name="instantiateForm"
 							args={<>Instantiating form for the {message.arguments} action...</>}
-							result={<>Form instantiated</>}
+							// result={<>Form instantiated</>}
 						/>
 					)
 				}
@@ -53,7 +53,7 @@ function MessageSwitch({ message }: { message: Message }) {
 						<ToolMessage
 							name="instantiateSelect"
 							args={<>Instantiating select for the {message.arguments} action...</>}
-							result={<>Select instantiated</>}
+							// result={<>Select instantiated</>}
 						/>
 					)
 				}

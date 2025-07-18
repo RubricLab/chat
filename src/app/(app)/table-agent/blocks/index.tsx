@@ -1,16 +1,7 @@
-import {
-	type BlockWithoutRenderArgs,
-	createBlock,
-	type StatefulBlockWithoutRenderArgs
-} from '@rubriclab/blocks'
-import { custom } from '@rubriclab/chains/lib2/utils'
-import type { ReactNode } from 'react'
+import { type AnyBlock, createBlock } from '@rubriclab/blocks'
 import z from 'zod/v4'
-export type AnyBlock =
-	| BlockWithoutRenderArgs<z.ZodType>
-	| StatefulBlockWithoutRenderArgs<z.ZodType, z.ZodType>
-
-export const REACT_NODE = custom<ReactNode, 'ReactNode'>('ReactNode')
+import { button } from './button'
+import { table } from './table'
 
 export const staticBlocks = {
 	cell: createBlock({
@@ -21,6 +12,11 @@ export const staticBlocks = {
 			input: z.union([z.string(), z.number()])
 		}
 	})
+}
+
+export const genericBlocks = {
+	button,
+	table
 }
 
 export const blocks = new Map<string, AnyBlock>(Object.entries(staticBlocks))

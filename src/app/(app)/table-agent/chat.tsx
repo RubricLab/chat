@@ -5,7 +5,7 @@ import { useSession } from '~/auth/client'
 import { ChatBox } from '~/components/chatBox'
 import { Code } from '~/components/code'
 import { Dropdown } from '~/components/dropdown'
-import { AssistantMessage, UserMessage } from '~/components/message'
+import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
 import type { TableAgentResponseEvent, TableAgentToolEvent } from '~/table-agent/agent'
 import { sendMessage } from '~/table-agent/ai'
 import { executeChain } from '~/table-agent/chains/execute'
@@ -49,6 +49,29 @@ function MessageSwitch({ message }: { message: Message }) {
 				</>
 			)
 		}
+
+		case 'function_call': {
+			switch (message.name) {
+				case 'instantiateButton': {
+					return (
+						<ToolMessage
+							name="instantiateButton"
+							args={<>Instantiating button for the {message.arguments} action...</>}
+							// result={<>Button instantiated</>}
+						/>
+					)
+				}
+				case 'instantiateTable': {
+					return (
+						<ToolMessage
+							name="instantiateTable"
+							args={<>Instantiating table for the {message.arguments} action...</>}
+							// result={<>Table instantiated</>}
+						/>
+					)
+				}
+			}
+		}
 	}
 }
 
@@ -64,7 +87,9 @@ function ChatMessages({
 	useEvents({
 		id: userId,
 		on: {
-			assistant_message: addMessage
+			assistant_message: addMessage,
+			instantiateButton: addMessage,
+			instantiateTable: addMessage
 		}
 	})
 

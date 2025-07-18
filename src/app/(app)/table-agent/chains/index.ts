@@ -1,8 +1,7 @@
-import { createDrill } from '@rubriclab/chains'
-import { createChain } from '@rubriclab/chains/lib2/chains'
+import type { AnyBlock } from '@rubriclab/blocks'
+import { createChain, createDrill } from '@rubriclab/chains'
 import { z } from 'zod/v4'
 import { actionSchemas } from '../actions'
-import type { AnyBlock } from '../blocks'
 
 export function getChain<Blocks extends Record<string, AnyBlock>>(blocks: Blocks) {
 	const blockSchemas = Object.fromEntries(

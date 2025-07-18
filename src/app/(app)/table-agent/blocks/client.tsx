@@ -1,8 +1,7 @@
 'use client'
 
 import { createBlockRenderer } from '@rubriclab/blocks'
-import { staticBlocks } from '~/table-agent/blocks'
-import { genericBlocks } from './generics'
+import { genericBlocks, staticBlocks } from '~/table-agent/blocks'
 
 export const { render } = createBlockRenderer({
 	blocks: { ...staticBlocks, ...genericBlocks }

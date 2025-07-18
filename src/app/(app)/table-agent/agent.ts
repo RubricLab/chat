@@ -1,17 +1,21 @@
-import { createActionDocs } from '@rubriclab/actions'
+import { type AnyAction, createActionDocs } from '@rubriclab/actions'
 import { createAgent, createResponseFormat } from '@rubriclab/agents'
 import { createBlocksDocs } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import { actions } from '~/table-agent/actions'
 import { getBlocks } from '~/table-agent/blocks'
 import { getChain } from '~/table-agent/chains'
-import { genericBlocks } from './blocks/generics'
-import { instantiateButtonTool } from './blocks/generics/button'
-import { instantiateTableTool } from './blocks/generics/table'
+import { genericBlocks } from './blocks'
+import { instantiateButton } from './blocks/button'
+import { instantiateTable } from './blocks/table'
 
 function getResponseFormat() {
-	const { compatibilities, chain } = getChain(getBlocks())
+	const { compatibilities, definitions, chain } = getChain(getBlocks())
 	const fullstackRegistry = z.registry<{ id: string }>()
+
+	for (const [id, { register }] of Object.entries(definitions)) {
+		register(fullstackRegistry, { id })
+	}
 
 	for (const [id, { register }] of Object.entries(compatibilities)) {
 		register(fullstackRegistry, { id })
@@ -57,7 +61,7 @@ Since the system requires rigid input and output schemas, sometimes you will nee
 When you instantiate a generic block with a tool call, the structured outputs available under the hood will change to include the new block's input and output schemas.
 
 Generic Blocks are instantiated with tool calls. You have access to the following generic blocks:
-${createActionDocs({ actions: genericBlocks })}
+${createActionDocs({ actions: genericBlocks as unknown as Record<string, AnyAction> })}
 
 Your job is to create chains of nodes to create a fullstack payload.
 First, consider any generic blocks that you need to instantiate. You can call tools to instantiate them.
@@ -65,13 +69,13 @@ When you are ready to generate the fullstack payload, output your final answer.
 
 Thank you for your help, let's get started!`
 
-console.dir(getResponseFormat(), { depth: null })
+// console.dir(getResponseFormat(), { depth: null })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
 	model: 'gpt-4.1',
 	responseFormat: getResponseFormat,
 	systemPrompt,
-	tools: { instantiateButtonTool, instantiateTableTool }
+	tools: { instantiateButton, instantiateTable }
 })
 
 export { eventTypes as tableAgentEventTypes }

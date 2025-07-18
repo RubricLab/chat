@@ -23,7 +23,7 @@ export function ToolMessage({
 }: {
 	name: string
 	args: ReactNode
-	result: ReactNode
+	result?: ReactNode
 }) {
 	return (
 		<div className="mb-3 flex justify-start">
@@ -39,13 +39,14 @@ export function ToolMessage({
 						</div>
 						<div className="surface rounded p-2">{args}</div>
 					</div>
-
-					<div>
-						<div className="mb-1 font-medium text-neutral-500 text-xs uppercase tracking-wide dark:text-neutral-400">
-							Output
+					{result && (
+						<div>
+							<div className="mb-1 font-medium text-neutral-500 text-xs uppercase tracking-wide dark:text-neutral-400">
+								Output
+							</div>
+							<div className="surface rounded p-2">{result}</div>
 						</div>
-						<div className="surface rounded p-2">{result}</div>
-					</div>
+					)}
 				</div>
 			</div>
 		</div>

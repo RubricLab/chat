@@ -11,7 +11,7 @@ export const actions = {
 	deleteUser: createAction({
 		description: 'Delete a user',
 		execute: async ({ userId }) => {
-			console.log(userId)
+			console.log(`DELETE ${userId}`)
 			return null
 		},
 		schema: {
@@ -19,16 +19,6 @@ export const actions = {
 				userId
 			}),
 			output: z.null()
-		}
-	}),
-	getMarkets: createAction({
-		description: 'Get all markets',
-		execute: async () => [],
-		schema: {
-			input: z.object({
-				limit: raw(z.number())
-			}),
-			output: z.array(z.object({ ticker: z.string() }))
 		}
 	}),
 	getUsers: createAction({
