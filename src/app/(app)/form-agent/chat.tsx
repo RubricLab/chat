@@ -9,6 +9,9 @@ import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message
 import { sendMessage } from '~/form-agent/ai'
 import { useEvents } from '~/form-agent/events/client'
 import type { FormAgentResponseEvent, FormAgentToolEvent } from './agent'
+import { addBlock } from './blocks'
+import { form } from './blocks/form'
+import { select } from './blocks/select'
 import { RenderChain } from './chains/execute'
 
 type Message =
@@ -40,6 +43,10 @@ function MessageSwitch({ message }: { message: Message }) {
 		case 'function_call': {
 			switch (message.name) {
 				case 'instantiateForm': {
+					addBlock({
+						block: form.instantiate(message.arguments),
+						name: `form<${message.arguments}>`
+					})
 					return (
 						<ToolMessage
 							name="instantiateForm"
@@ -49,6 +56,10 @@ function MessageSwitch({ message }: { message: Message }) {
 					)
 				}
 				case 'instantiateSelect': {
+					addBlock({
+						block: select.instantiate(message.arguments),
+						name: `select<${message.arguments}>`
+					})
 					return (
 						<ToolMessage
 							name="instantiateSelect"

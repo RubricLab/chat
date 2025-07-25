@@ -33,7 +33,7 @@ function getResponseFormat() {
 		})
 	})
 
-	// console.dir(responseFormat, { depth: null })
+	console.dir(responseFormat, { depth: null })
 	return responseFormat
 }
 

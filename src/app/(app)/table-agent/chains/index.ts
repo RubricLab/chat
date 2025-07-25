@@ -11,7 +11,7 @@ export function getChain<Blocks extends Record<string, AnyBlock>>(blocks: Blocks
 	const { definitions, compatibilities } = createChain(
 		{ ...actionSchemas, ...blockSchemas },
 		{
-			strict: false
+			strict: true
 		}
 	)
 	const chain = z.union(Object.values(definitions))

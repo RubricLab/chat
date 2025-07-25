@@ -1,3 +1,4 @@
+/** biome-ignore-all assist/source/useSortedKeys:_ */
 'use client'
 
 import { createBlockRenderer } from '@rubriclab/blocks'

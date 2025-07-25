@@ -9,6 +9,9 @@ import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message
 import type { TableAgentResponseEvent, TableAgentToolEvent } from '~/table-agent/agent'
 import { sendMessage } from '~/table-agent/ai'
 import { useEvents } from '~/table-agent/events/client'
+import { addBlock } from './blocks'
+import { button } from './blocks/button'
+import { table } from './blocks/table'
 import { RenderChain } from './chains/execute'
 
 type Message =
@@ -44,6 +47,10 @@ function MessageSwitch({ message }: { message: Message }) {
 		case 'function_call': {
 			switch (message.name) {
 				case 'instantiateButton': {
+					addBlock({
+						block: button.instantiate(message.arguments),
+						name: `button<${message.arguments}>`
+					})
 					return (
 						<ToolMessage
 							name="instantiateButton"
@@ -53,6 +60,10 @@ function MessageSwitch({ message }: { message: Message }) {
 					)
 				}
 				case 'instantiateTable': {
+					addBlock({
+						block: table.instantiate(message.arguments),
+						name: `table<${message.arguments}>`
+					})
 					return (
 						<ToolMessage
 							name="instantiateTable"
@@ -113,7 +124,10 @@ export function Chat() {
 	return (
 		<div className="w-full">
 			<ChatMessages userId={userId} messages={messages} addMessage={addMessage} />
-			<ChatBox placeholder="Generate a table of users - with an option to delete each one" submit={handleSubmit} />
+			<ChatBox
+				placeholder="Generate a table of users - with an option to delete each one"
+				submit={handleSubmit}
+			/>
 		</div>
 	)
 }
