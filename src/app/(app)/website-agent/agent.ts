@@ -7,6 +7,7 @@ import { chain, compatibilities, definitions } from '~/website-agent/chains'
 const registry = z.registry<{ id: string }>()
 
 // Register definitions
+// @ts-expect-error union overflow
 for (const [id, { register }] of Object.entries(definitions)) register(registry, { id })
 
 // Register compatabilities

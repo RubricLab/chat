@@ -5,7 +5,7 @@ import { execute } from '../actions/server'
 import { getBlocks } from '../blocks'
 import { getChain } from '.'
 
-export async function executeChain(chain: unknown) {
+export async function executeChain(chain: { node: string; input: unknown }) {
 	const { drill } = getChain(getBlocks())
 
 	return drill(chain, node => {
@@ -16,7 +16,7 @@ export async function executeChain(chain: unknown) {
 	})
 }
 
-export function RenderChain({ chain }: { chain: unknown }) {
+export function RenderChain({ chain }: { chain: { node: string; input: unknown } }) {
 	const [dom, setDom] = useState<ReactNode>()
 
 	useEffect(() => {
