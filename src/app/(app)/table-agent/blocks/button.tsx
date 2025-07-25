@@ -3,33 +3,20 @@ import { createGenericBlock } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
 import { actionSchemas } from '~/table-agent/actions'
 import { execute } from '../actions/server'
-import { type Raw, raw } from '../brands'
+import { raw } from '../brands'
 import { addBlock } from '.'
-
-const buttonTypes = Object.fromEntries(
-	Object.entries(actionSchemas).map(([key, { input }]) => [
-		key,
-		{
-			input: z.object({
-				input,
-				mutation: raw(z.literal(key)),
-				text: raw(z.string())
-			})
-		}
-	])
-) as {
-	[K in keyof typeof actionSchemas]: {
-		input: z.ZodObject<{
-			mutation: Raw<z.ZodLiteral<K>>
-			text: Raw<z.ZodString>
-			input: (typeof actionSchemas)[K]['input']
-		}>
-	}
-}
 
 export const button = createGenericBlock({
 	description: '',
-
+	getSchema(typeKey) {
+		return {
+			input: z.object({
+				input: actionSchemas[typeKey].input,
+				mutation: raw(z.literal(typeKey)),
+				text: raw(z.string())
+			})
+		}
+	},
 	render({ mutation, text, input }) {
 		async function exec() {
 			await execute({ action: mutation, params: input })
@@ -40,7 +27,7 @@ export const button = createGenericBlock({
 			</button>
 		)
 	},
-	types: buttonTypes
+	types: actionSchemas
 })
 
 export const instantiateButton = createTool({

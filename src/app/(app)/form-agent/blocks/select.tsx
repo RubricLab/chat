@@ -1,9 +1,8 @@
 import { createTool } from '@rubriclab/agents'
 import { createGenericStatefulBlock } from '@rubriclab/blocks'
 import { z } from 'zod/v4'
-import type { $strict } from 'zod/v4/core'
 import { actionSchemas } from '../actions'
-import { type Raw, raw } from '../brands'
+import { raw } from '../brands'
 import { addBlock } from '.'
 
 const selectCompatibleActions = Object.fromEntries(
@@ -20,10 +19,12 @@ const selectCompatibleActions = Object.fromEntries(
 		: never]: (typeof actionSchemas)[K]
 }
 
-const selectTypes = Object.fromEntries(
-	Object.entries(selectCompatibleActions).map(([key, { output }]) => [
-		key,
-		{
+export const select = createGenericStatefulBlock({
+	description:
+		'An action that instantiates a new select block and adds it to the schema. Selects must be instantiated with an array-producing-action that they are responsible for offering a user a selection of. The instantiated block takes as input the output of the array-producing-action and outputs React and an element of that array as state.',
+	getSchema(typeKey) {
+		const { output } = selectCompatibleActions[typeKey]
+		return {
 			input: z.strictObject({
 				data: output,
 				label: raw(
@@ -32,23 +33,7 @@ const selectTypes = Object.fromEntries(
 			}),
 			output: output.def.element
 		}
-	])
-) as {
-	[K in keyof typeof selectCompatibleActions]: {
-		input: z.ZodObject<
-			{
-				data: (typeof selectCompatibleActions)[K]['output']
-				label: Raw<z.ZodEnum>
-			},
-			$strict
-		>
-		output: (typeof selectCompatibleActions)[K]['output']['element']
-	}
-}
-
-export const select = createGenericStatefulBlock({
-	description:
-		'An action that instantiates a new select block and adds it to the schema. Selects must be instantiated with an array-producing-action that they are responsible for offering a user a selection of. The instantiated block takes as input the output of the array-producing-action and outputs React and an element of that array as state.',
+	},
 	render({ data, label }) {
 		const first = data[0]
 
@@ -71,7 +56,7 @@ export const select = createGenericStatefulBlock({
 			initialState: first
 		}
 	},
-	types: selectTypes
+	types: selectCompatibleActions
 })
 
 export const instantiateSelect = createTool({

@@ -1,9 +1,9 @@
 import { createTool } from '@rubriclab/agents'
 import { createGenericBlock, REACT_NODE } from '@rubriclab/blocks'
-import { type Scoped, scope } from '@rubriclab/shapes'
+import { brand, scope } from '@rubriclab/shapes'
 import z from 'zod/v4'
 import { actionSchemas } from '~/table-agent/actions'
-import { type Raw, raw } from '../brands'
+import { raw } from '../brands'
 import { addBlock } from '.'
 
 const tableCompatibleActions = Object.fromEntries(
@@ -16,53 +16,31 @@ const tableCompatibleActions = Object.fromEntries(
 		: never]: (typeof actionSchemas)[K]
 }
 
-const tableTypes = Object.fromEntries(
-	Object.entries(tableCompatibleActions).map(([action, { output }]) => [
-		action,
-		{
+export const table = createGenericBlock({
+	description: 'Render a text input',
+	getSchema(typeKey) {
+		return {
 			input: z.object({
 				columns: z.array(
 					z.object({
 						children: scope(
 							REACT_NODE,
-							`table<${action}>`,
+							`table<${typeKey}>`,
 							Object.fromEntries(
-								Object.entries(output.def.element.def.shape).map(([field, value]) => [
-									`$$.table<${action}>.N.${field}`,
-									value
-								])
+								Object.entries(tableCompatibleActions[typeKey].output.def.element.def.shape).map(
+									([field, value]) => [`$$.table<${typeKey}>.N.${field}`, value]
+								)
 							)
 						),
 						heading: raw(z.string())
 					})
 				),
-				data: output
+				data: tableCompatibleActions[typeKey].output,
+				query: brand('query', false)(z.literal(typeKey))
 			})
 		}
-	])
-) as unknown as {
-	[K in keyof typeof tableCompatibleActions]: {
-		input: z.ZodObject<{
-			data: (typeof tableCompatibleActions)[K]['output']
-			columns: z.ZodArray<
-				z.ZodObject<{
-					heading: Raw<z.ZodString>
-					children: Scoped<
-						typeof REACT_NODE,
-						`table<${K}>`,
-						{
-							[S in keyof (typeof tableCompatibleActions)[K]['output']['def']['element']['def']['shape'] as `$$.table<${K}>.N.${S & string}`]: (typeof tableCompatibleActions)[K]['output']['def']['element']['def']['shape'][S]
-						}
-					>
-				}>
-			>
-		}>
-	}
-}
-
-export const table = createGenericBlock({
-	description: 'Render a text input',
-	render: ({ data, columns }) => {
+	},
+	render: ({ data, columns, query }) => {
 		return (
 			<table>
 				<thead>
@@ -79,11 +57,11 @@ export const table = createGenericBlock({
 								{columns.map((p, i) => {
 									return (
 										<td key={`column-${i.toString()}`}>
-											{p.children({
-												'$$.table<getUsers>.N.email': _row.email,
-												'$$.table<getUsers>.N.id': _row.id,
-												'$$.table<getUsers>.N.name': _row.name
-											})}
+											{p.children(
+												Object.fromEntries(
+													Object.entries(_row).map(([key, field]) => [`$$.table<${query}>.N.${key}`, field])
+												)
+											)}
 										</td>
 									)
 								})}
@@ -94,7 +72,7 @@ export const table = createGenericBlock({
 			</table>
 		)
 	},
-	types: tableTypes
+	types: tableCompatibleActions
 })
 
 export const instantiateTable = createTool({
