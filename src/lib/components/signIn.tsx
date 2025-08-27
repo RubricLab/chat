@@ -1,11 +1,14 @@
-'use client'
-
 import { signIn } from '~/auth/actions'
 
 export function SignInButton() {
 	return (
-		<button type="button" onClick={async () => signIn({ callbackUrl: '/', provider: 'github' })}>
-			Sign In With Github
-		</button>
+		<form
+			action={async () => {
+				'use server'
+				await signIn({ callbackUrl: '/', provider: 'github' })
+			}}
+		>
+			<button type="submit">Sign In With Github</button>
+		</form>
 	)
 }
