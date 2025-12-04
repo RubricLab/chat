@@ -1,5 +1,5 @@
 import { createBlock, REACT_NODE } from '@rubriclab/blocks'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { raw_number, raw_string, url } from '../brands'
 import { Card } from './card'
 import { Code } from './code'

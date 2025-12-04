@@ -1,6 +1,6 @@
 import { createTool } from '@rubriclab/agents'
 import { createGenericBlock } from '@rubriclab/blocks'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { actionSchemas } from '~/table-agent/actions'
 import { execute } from '../actions/server'
 import { raw } from '../brands'

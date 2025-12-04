@@ -1,7 +1,7 @@
 'use client'
 
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react'
-import type { z } from 'zod/v4'
+import type { z } from 'zod'
 
 export function useStateful<T extends z.ZodTypeAny, S = z.infer<T>>(
 	_type: T,

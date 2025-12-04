@@ -1,5 +1,5 @@
 import { type AnyBlock, createBlock, createStatefulBlock } from '@rubriclab/blocks'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { raw } from '../brands'
 import { form } from './form'
 import { select } from './select'

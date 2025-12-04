@@ -1,7 +1,7 @@
 /** biome-ignore-all assist/source/useSortedKeys: key sorting makes the demo harder to understand */
 
 import { createChain, createDrill } from '@rubriclab/chains'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { actionSchemas } from '../actions'
 
 export const { definitions, compatibilities } = createChain(actionSchemas, {

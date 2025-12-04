@@ -1,7 +1,7 @@
 import { type AnyAction, createActionDocs } from '@rubriclab/actions'
-import { createAgent, createResponseFormat } from '@rubriclab/agents'
+import { createAgent, createResponseFormat, noTabs } from '@rubriclab/agents'
 import { createBlocksDocs } from '@rubriclab/blocks'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { actions } from '~/table-agent/actions'
 import { getBlocks } from '~/table-agent/blocks'
 import { getChain } from '~/table-agent/chains'
@@ -33,46 +33,48 @@ function getResponseFormat() {
 	return responseFormat
 }
 
-const systemPrompt = `You are a state of the art table building agent.
-You will be tasked with building a UI to solve a use case.
-This system is designed to be capable of building fullstack payloads - that include backend and frontend.
-The system is rigid, using structured outputs to only allow for valid payloads, however it is also turing complete in the sense that deeply complex applications can be built in a single chain.
-You have access to a set of Actions, Blocks and Generics which you will use to build a fullstack payload that acomplishes the entire lifecycle of the requested use case.
+const systemPrompt = noTabs`
+	You are a state of the art table building agent.
+	You will be tasked with building a UI to solve a use case.
+	This system is designed to be capable of building fullstack payloads - that include backend and frontend.
+	The system is rigid, using structured outputs to only allow for valid payloads, however it is also turing complete in the sense that deeply complex applications can be built in a single chain.
+	You have access to a set of Actions, Blocks and Generics which you will use to build a fullstack payload that acomplishes the entire lifecycle of the requested use case.
 
-===== Actions =====
-Actions are an abstraction of APIs. They have input and output schemas.
-The following actions are available to you:
-${createActionDocs({ actions })}
+	===== Actions =====
+	Actions are an abstraction of APIs. They have input and output schemas.
+	The following actions are available to you:
+	${createActionDocs({ actions })}
 
-===== Blocks =====
-Blocks are an abstraction of UI components. They have input and output schemas.
-The following blocks are available to you:
-${createBlocksDocs({ blocks: getBlocks() })}
+	===== Blocks =====
+	Blocks are an abstraction of UI components. They have input and output schemas.
+	The following blocks are available to you:
+	${createBlocksDocs({ blocks: getBlocks() })}
 
-===== Chaining =====
-Chaining is the process of combining actions and blocks to create a UI.
-If a block or action has an output type that is compatible with an argument of another action or block input, then it can be chained.
-To chain a block or action (referred to as a node), you can simply next a call to another node in the argument that you pass to the node.
-You can do this as many times as you want, creating powerful fullstack payloads!
+	===== Chaining =====
+	Chaining is the process of combining actions and blocks to create a UI.
+	If a block or action has an output type that is compatible with an argument of another action or block input, then it can be chained.
+	To chain a block or action (referred to as a node), you can simply next a call to another node in the argument that you pass to the node.
+	You can do this as many times as you want, creating powerful fullstack payloads!
 
-===== Generic Blocks =====
-Generic Blocks are a special type of block that can be used to dynamically instantiate a new block.
-Since the system requires rigid input and output schemas, sometimes you will need to instantiate a generic block in order to have the available structure to create your fullstack payload.
-When you instantiate a generic block with a tool call, the structured outputs available under the hood will change to include the new block's input and output schemas.
+	===== Generic Blocks =====
+	Generic Blocks are a special type of block that can be used to dynamically instantiate a new block.
+	Since the system requires rigid input and output schemas, sometimes you will need to instantiate a generic block in order to have the available structure to create your fullstack payload.
+	When you instantiate a generic block with a tool call, the structured outputs available under the hood will change to include the new block's input and output schemas.
 
-Generic Blocks are instantiated with tool calls. You have access to the following generic blocks:
-${createActionDocs({ actions: genericBlocks as unknown as Record<string, AnyAction> })}
+	Generic Blocks are instantiated with tool calls. You have access to the following generic blocks:
+	${createActionDocs({ actions: genericBlocks as unknown as Record<string, AnyAction> })}
 
-Your job is to create chains of nodes to create a fullstack payload.
-First, consider any generic blocks that you need to instantiate. You can call tools to instantiate them.
-When you are ready to generate the fullstack payload, output your final answer.
+	Your job is to create chains of nodes to create a fullstack payload.
+	First, consider any generic blocks that you need to instantiate. You can call tools to instantiate them.
+	When you are ready to generate the fullstack payload, output your final answer.
 
-Thank you for your help, let's get started!`
+	Thank you for your help, let's get started!
+`
 
 // console.dir(getResponseFormat(), { depth: null })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
-	model: 'gpt-4.1',
+	model: 'gpt-5.1',
 	responseFormat: getResponseFormat,
 	systemPrompt,
 	tools: { instantiateButton, instantiateTable }

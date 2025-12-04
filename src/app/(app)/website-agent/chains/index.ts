@@ -1,5 +1,5 @@
 import { createChain, createDrill } from '@rubriclab/chains'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { blocks } from '~/website-agent/blocks'
 
 const blockSchemas = Object.fromEntries(

@@ -1,5 +1,5 @@
 import { createAction } from '@rubriclab/actions'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { raw } from '../brands'
 import { getUsers } from './getUsers'
 import { sendEmail } from './sendEmail'

@@ -1,6 +1,6 @@
 'use server'
 
-import Exa from 'exa-js'
+import { Exa } from 'exa-js'
 import env from '~/env'
 
 const exa = new Exa(env.EXA_API_KEY)
@@ -19,7 +19,10 @@ export async function search({ query, numResults }: { query: string; numResults:
 }
 
 export async function getContents({ url }: { url: string }) {
-	const { results } = await exa.getContents(url, { livecrawl: 'auto', text: true })
+	const { results } = await exa.getContents(url, {
+		livecrawl: 'auto',
+		text: true
+	})
 
 	if (!results[0]) {
 		return {

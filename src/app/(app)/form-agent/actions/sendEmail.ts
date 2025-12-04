@@ -1,7 +1,7 @@
 'use server'
 
 import { Resend } from 'resend'
-import type { z } from 'zod/v4'
+import type { z } from 'zod'
 import env from '~/env'
 import type { user } from './index'
 

@@ -1,8 +1,8 @@
 import { createAgent, createTool } from '@rubriclab/agents'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 
 export const { executeAgent: executeAdditionAgent, __ResponseEvent } = createAgent({
-	model: 'gpt-4.1',
+	model: 'gpt-5.1',
 	systemPrompt: 'You are an addition agent. Use tools to add two numbers.',
 	tools: {
 		add: createTool({

@@ -1,7 +1,7 @@
 import { createTool } from '@rubriclab/agents'
 import { createGenericBlock, REACT_NODE } from '@rubriclab/blocks'
 import { brand, scope } from '@rubriclab/shapes'
-import z from 'zod/v4'
+import z from 'zod'
 import { actionSchemas } from '~/table-agent/actions'
 import { raw } from '../brands'
 import { addBlock } from '.'

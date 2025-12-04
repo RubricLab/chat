@@ -1,6 +1,6 @@
 import type { AnyBlock } from '@rubriclab/blocks'
 import { createChain, createDrill } from '@rubriclab/chains'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { actionSchemas } from '../actions'
 
 export function getChain<Blocks extends Record<string, AnyBlock>>(blocks: Blocks) {

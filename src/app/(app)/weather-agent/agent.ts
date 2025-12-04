@@ -1,7 +1,10 @@
-import { createAgent, createTool } from '@rubriclab/agents'
-import { z } from 'zod/v4'
+import { createAgent, createTool, noTabs } from '@rubriclab/agents'
+import { z } from 'zod'
 
-const systemPrompt = 'You are a weather agent. Use tools to get the weather for the user.'
+const systemPrompt = noTabs`
+	You are a weather agent.
+	Use tools to get the weather for the user.
+`
 
 const weatherTool = createTool({
 	execute: async ({ city: _city }) => ({ condition: 'sunny', temp: 72 }),
@@ -12,7 +15,7 @@ const weatherTool = createTool({
 })
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
-	model: 'gpt-4.1',
+	model: 'gpt-5.1',
 	systemPrompt,
 	tools: { getWeather: weatherTool }
 })

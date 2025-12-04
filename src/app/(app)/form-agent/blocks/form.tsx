@@ -1,7 +1,7 @@
 import { createTool } from '@rubriclab/agents'
 import { createGenericBlock, stateful } from '@rubriclab/blocks'
 import { brand } from '@rubriclab/shapes'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { actionSchemas } from '../actions'
 import { execute } from '../actions/server'
 import { raw } from '../brands'

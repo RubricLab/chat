@@ -1,5 +1,5 @@
 import { createAction } from '@rubriclab/actions'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { getUsers } from './getUsers'
 
 export const actions = {

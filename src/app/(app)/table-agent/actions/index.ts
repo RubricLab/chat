@@ -1,6 +1,6 @@
 import { createAction } from '@rubriclab/actions'
 import { brand } from '@rubriclab/shapes'
-import { z } from 'zod/v4'
+import { z } from 'zod'
 import { getUsers } from './getUsers'
 
 const raw = brand('raw', false)

@@ -1,5 +1,5 @@
 import { type AnyBlock, createBlock } from '@rubriclab/blocks'
-import z from 'zod/v4'
+import z from 'zod'
 import { button } from './button'
 import { table } from './table'
 

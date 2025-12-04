@@ -1,7 +1,6 @@
 {
 	"dependencies": {
-		"@neondatabase/serverless": "latest",
-		"@prisma/client": "latest",
+		"@neondatabase/serverless": "1.0.2",
 		"@rubriclab/actions": "*",
 		"@rubriclab/agents": "*",
 		"@rubriclab/auth": "*",
@@ -9,27 +8,28 @@
 		"@rubriclab/chains": "*",
 		"@rubriclab/events": "*",
 		"@rubriclab/shapes": "*",
-		"@t3-oss/env-nextjs": "latest",
-		"@tailwindcss/postcss": "latest",
-		"drizzle-kit": "latest",
-		"drizzle-orm": "latest",
-		"exa-js": "latest",
-		"next": "latest",
-		"postcss": "latest",
-		"resend": "latest",
-		"tailwindcss": "latest",
-		"zod": "latest"
+		"@t3-oss/env-nextjs": "0.13.8",
+		"@tailwindcss/postcss": "4.1.17",
+		"drizzle-kit": "0.31.8",
+		"drizzle-orm": "0.45.0",
+		"exa-js": "2.0.11",
+		"next": "16.0.7",
+		"postcss": "8.5.6",
+		"resend": "6.5.2",
+		"tailwindcss": "4.1.17",
+		"zod": "4.1.13"
 	},
 	"devDependencies": {
 		"@rubriclab/config": "*",
-		"@types/bun": "latest",
-		"@types/react": "latest",
-		"typescript": "latest"
+		"@types/bun": "1.3.3",
+		"@types/react": "19.2.7",
+		"typescript": "5.9.3"
 	},
 	"module": "index.ts",
 	"name": "chat",
 	"private": true,
 	"scripts": {
+		"bleed": "bun x npm-check-updates -u",
 		"build": "next build",
 		"db:push": "drizzle-kit push",
 		"dev": "next dev",

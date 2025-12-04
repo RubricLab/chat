@@ -1,18 +1,20 @@
 import { createActionDocs } from '@rubriclab/actions'
-import { createAgent, createTool } from '@rubriclab/agents'
+import { createAgent, createTool, noTabs } from '@rubriclab/agents'
 import { actions } from './actions'
 
-const systemPrompt = `You are an action execution. 
-Use tools to perform actions. 
-When satisfied, return the explicit answer as directly and simply as possible.
+const systemPrompt = noTabs`
+	You are an action execution. 
+	Use tools to perform actions. 
+	When satisfied, return the explicit answer as directly and simply as possible.
 
-You have access to the following tools:
-${createActionDocs({ actions })}`
+	You have access to the following tools:
+	${createActionDocs({ actions })}
+`
 
 const getUsersTool = createTool(actions.getUsers)
 
 const { executeAgent, eventTypes, __ToolEvent, __ResponseEvent } = createAgent({
-	model: 'gpt-4.1',
+	model: 'gpt-5.1',
 	systemPrompt,
 	tools: { getUsers: getUsersTool }
 })
