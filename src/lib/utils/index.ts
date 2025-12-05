@@ -1,0 +1,1 @@
+export { stripExcessiveNewlines } from './string'
