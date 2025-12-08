@@ -1,5 +1,6 @@
 'use client'
 
+import { Container, Heading, Link, Text } from '@rubriclab/ui'
 import type { ReactNode } from 'react'
 
 const AgentRow = ({
@@ -13,25 +14,29 @@ const AgentRow = ({
 	description: ReactNode
 	source: string
 }) => (
-	<tr className="border-gray-200 border-b dark:border-neutral-800">
-		<td className="px-8 py-2">
-			<a href={href}>{name}</a>
+	<tr className="hover:bg-muted">
+		<td className="whitespace-nowrap px-6 py-3">
+			<Link href={href}>{name}</Link>
 		</td>
-		<td className="px-8 py-2">{description}</td>
-		<td className="px-8 py-2">
-			<a target="_blank" rel="noreferrer" href={source}>
+		<td className="px-6 py-3">
+			<Text size="sm" variant="tertiary">
+				{description}
+			</Text>
+		</td>
+		<td className="px-6 py-3">
+			<Link target="_blank" href={source}>
 				Source
-			</a>
+			</Link>
 		</td>
 	</tr>
 )
 
 export default function () {
 	return (
-		<div className="flex flex-col items-center gap-4">
-			<h1 className="mb-4 font-bold text-2xl">Demos</h1>
+		<Container gap="lg" align="center" justify="center">
+			<Heading level="1">Demos</Heading>
 			<table>
-				<tbody>
+				<tbody className="divide-y divide-border">
 					<AgentRow
 						href="/addition-agent"
 						name="Addition Agent"
@@ -114,6 +119,6 @@ export default function () {
 					/>
 				</tbody>
 			</table>
-		</div>
+		</Container>
 	)
 }

@@ -1,8 +1,8 @@
 'use server'
 
 import { eq } from 'drizzle-orm'
-import type z from 'zod'
-import db from '~/db'
+import type { z } from 'zod'
+import { db } from '~/db'
 import { users } from '~/db/schema/auth'
 import type { user as userSchema } from './index'
 

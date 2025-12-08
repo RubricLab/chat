@@ -1,5 +1,6 @@
 'use client'
 
+import { Input } from '@rubriclab/ui'
 import { useEffect, useState } from 'react'
 
 export function TextInput({ emit }: { emit: (value: string) => void }) {
@@ -9,5 +10,5 @@ export function TextInput({ emit }: { emit: (value: string) => void }) {
 		emit(value)
 	}, [value, emit])
 
-	return <input onChange={e => setValue(e.target.value)} type="text" />
+	return <Input onChange={e => setValue(e.target.value)} type="text" />
 }

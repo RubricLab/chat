@@ -1,5 +1,5 @@
 import { createAuth, createGithubAuthenticationProvider, drizzleAdapter } from '@rubriclab/auth'
-import db from '~/db'
+import { db } from '~/db'
 import env from '~/env'
 
 export const { routes, actions, __types } = createAuth({

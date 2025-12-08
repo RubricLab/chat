@@ -1,9 +1,9 @@
 'use client'
 
+import { Code } from '@rubriclab/ui'
 import { useState } from 'react'
 import { useSession } from '~/auth/client'
 import { ChatBox } from '~/components/chatBox'
-import { Code } from '~/components/code'
 import { Dropdown } from '~/components/dropdown'
 import { AssistantMessage, ToolMessage, UserMessage } from '~/components/message'
 import type { TableAgentResponseEvent, TableAgentToolEvent } from '~/table-agent/agent'

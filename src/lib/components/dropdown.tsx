@@ -14,7 +14,7 @@ export function Dropdown({ title, children, defaultOpen = false }: DropdownProps
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
-				className="button-secondary flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left font-medium text-sm"
+				className="button-secondary flex w-full items-center justify-between gap-2 rounded-default px-3 py-2 text-left font-medium text-sm"
 			>
 				<span>{title}</span>
 				<span> {isOpen ? '▼' : '▶'}</span>

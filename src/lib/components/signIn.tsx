@@ -1,3 +1,4 @@
+import { Button } from '@rubriclab/ui'
 import { signIn } from '~/auth/actions'
 
 export function SignInButton() {
@@ -8,7 +9,7 @@ export function SignInButton() {
 				await signIn({ callbackUrl: '/', provider: 'github' })
 			}}
 		>
-			<button type="submit">Sign In With Github</button>
+			<Button variant="primary" label="Sign in with GitHub" type="submit" />
 		</form>
 	)
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { Code, Text } from '@rubriclab/ui'
 import { useEffect, useState } from 'react'
 import { useSession } from '~/auth/client'
 import type {
@@ -8,7 +9,6 @@ import type {
 } from '~/calculator-agent/agent'
 import { sendMessage } from '~/calculator-agent/ai'
 import { useEvents } from '~/calculator-agent/events/client'
-import { Code } from '~/components/code'
 import { AssistantMessage, UserMessage } from '~/components/message'
 import { ChatBox } from '../../../lib/components/chatBox'
 import type { Chain } from './chains'
@@ -29,7 +29,7 @@ function RenderChain({ chain }: { chain: Chain }) {
 		executeChain(chain).then(setResult)
 	}, [chain])
 
-	return result && `Result: ${result}`
+	return result && <Text>Result: {result}</Text>
 }
 
 function MessageSwitch({ message }: { message: Message }) {

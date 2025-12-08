@@ -1,5 +1,6 @@
 import { createTool } from '@rubriclab/agents'
 import { createGenericStatefulBlock } from '@rubriclab/blocks'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@rubriclab/ui'
 import { z } from 'zod'
 import { actionSchemas } from '../actions'
 import { raw } from '../brands'
@@ -42,15 +43,24 @@ export const select = createGenericStatefulBlock({
 		return {
 			component({ emit }) {
 				return (
-					<select onChange={e => emit(JSON.parse(e.target.value))}>
-						{data.map((element, i) => {
-							return (
-								<option key={`option-${i.toString()}`} value={JSON.stringify(element)}>
-									{element[label as keyof typeof element].toString()}
-								</option>
-							)
-						})}
-					</select>
+					<Select
+						onValueChange={e => {
+							emit(JSON.parse(e))
+						}}
+					>
+						<SelectTrigger>
+							<SelectValue placeholder={first[label as keyof typeof first].toString()} />
+						</SelectTrigger>
+						<SelectContent>
+							{data.map((element, i) => {
+								return (
+									<SelectItem key={`option-${i.toString()}`} value={JSON.stringify(element)}>
+										{element[label as keyof typeof element].toString()}
+									</SelectItem>
+								)
+							})}
+						</SelectContent>
+					</Select>
 				)
 			},
 			initialState: first

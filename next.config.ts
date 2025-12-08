@@ -10,6 +10,7 @@ export default {
 		'@rubriclab/agents',
 		'@rubriclab/events',
 		'@rubriclab/chains',
-		'@rubriclab/shapes'
+		'@rubriclab/shapes',
+		'@rubriclab/ui'
 	]
 } satisfies NextConfig

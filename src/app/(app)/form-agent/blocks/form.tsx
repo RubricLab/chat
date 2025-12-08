@@ -1,6 +1,7 @@
 import { createTool } from '@rubriclab/agents'
 import { createGenericBlock, stateful } from '@rubriclab/blocks'
 import { brand } from '@rubriclab/shapes'
+import { Button, Container, Heading, Label } from '@rubriclab/ui'
 import { z } from 'zod'
 import { actionSchemas } from '../actions'
 import { execute } from '../actions/server'
@@ -45,19 +46,20 @@ export const form = createGenericBlock({
 		}
 		return (
 			<form>
-				<h2>{title}</h2>
-				{Object.entries(fields).map(([key, [_, react]]) => {
-					return (
-						<div key={key}>
-							<p>{key}</p>
-							<br />
-							{react}
-						</div>
-					)
-				})}
-				<button type="button" onClick={exec}>
-					submit
-				</button>
+				<Container gap="md" arrangement="column">
+					<Heading level="2">{title}</Heading>
+					{Object.entries(fields).map(([key, [_, react]]) => {
+						return (
+							<Container key={key} arrangement="column" gap="sm">
+								<Label className="capitalize" htmlFor={key}>
+									{key}
+								</Label>
+								{react}
+							</Container>
+						)
+					})}
+					<Button type="button" variant="primary" onClick={exec} label="Submit" />
+				</Container>
 			</form>
 		)
 	},

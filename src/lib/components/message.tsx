@@ -1,18 +1,21 @@
+import { Container } from '@rubriclab/ui'
 import type { ReactNode } from 'react'
 
 export function UserMessage({ children }: { children: ReactNode }) {
 	return (
-		<div className="mb-3 flex justify-end">
-			<div className="message-user max-w-3xl rounded-lg px-3 py-2">{children}</div>
-		</div>
+		<Container arrangement="row" justify="end" className="mb-3">
+			<div className="message-user max-w-3xl rounded-default px-2.5 py-2">{children}</div>
+		</Container>
 	)
 }
 
 export function AssistantMessage({ children }: { children: ReactNode }) {
 	return (
-		<div className="mb-3 flex justify-start">
-			<div className="message-assistant max-w-3xl rounded-lg px-3 py-2">{children}</div>
-		</div>
+		<Container arrangement="row" justify="start" className="mb-3">
+			<div className="message-assistant max-w-3xl rounded-default px-2.5 py-2 sm:min-w-lg">
+				{children}
+			</div>
+		</Container>
 	)
 }
 
@@ -26,13 +29,15 @@ export function ToolMessage({
 	result?: ReactNode
 }) {
 	return (
-		<div className="mb-3 flex justify-start">
-			<div className="message-assistant max-w-3xl rounded-lg px-3 py-2">
-				<div className="mb-2 font-medium text-neutral-700 text-sm dark:text-neutral-300">
-					Tool: {name}
-				</div>
-
-				<div className="space-y-2 text-sm">
+		<Container arrangement="row" justify="start" className="mb-3">
+			<div className="message-assistant max-w-3xl rounded-default px-2.5 py-2">
+				<div className="space-y-3 text-sm">
+					<div>
+						<div className="mb-1 font-medium text-neutral-500 text-xs uppercase tracking-wide dark:text-neutral-400">
+							Tool
+						</div>
+						<code className="text-amber-600">{name}</code>
+					</div>
 					<div>
 						<div className="mb-1 font-medium text-neutral-500 text-xs uppercase tracking-wide dark:text-neutral-400">
 							Input
@@ -49,6 +54,6 @@ export function ToolMessage({
 					)}
 				</div>
 			</div>
-		</div>
+		</Container>
 	)
 }
