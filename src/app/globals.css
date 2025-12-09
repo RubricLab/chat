@@ -46,7 +46,12 @@
 	--color-muted: var(--muted);
 	--color-muted-foreground: var(--muted-foreground);
 	--radius-default: var(--radius); /* Radius token for rounded utilities */
-	--border-default: var(--border);
+}
+
+@layer base {
+	* {
+		border-color: var(--border, currentColor);
+	}
 }
 
 html {
